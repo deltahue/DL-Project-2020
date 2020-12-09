@@ -9,8 +9,9 @@ import torch.utils.data as data
 from PIL import Image
 import os
 import os.path
+import nibabel as nib
 
-IMG_EXTENSIONS = [
+IMG_EXTENSIONS = ['.nii',
     '.jpg', '.JPG', '.jpeg', '.JPEG',
     '.png', '.PNG', '.ppm', '.PPM', '.bmp', '.BMP',
     '.tif', '.TIF', '.tiff', '.TIFF',
@@ -34,8 +35,8 @@ def make_dataset(dir, max_dataset_size=float("inf")):
 
 
 def default_loader(path):
-    return Image.open(path).convert('RGB')
-
+    #return Image.open(path).convert('RGB')
+    return nib.load(path)
 
 class ImageFolder(data.Dataset):
 
