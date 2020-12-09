@@ -79,8 +79,10 @@ def get_params(opt, size):
     return {'crop_pos': (x, y), 'flip': flip}
 
 
-def get_transform(opt, params=None, grayscale=False, method=Image.BICUBIC, convert=True):
+def get_transform(opt, params=None, grayscale=False, data_augmentation = True, method=Image.BICUBIC, convert=True):
     transform_list = []
+    if data_augmentation:
+        transform_list.append(transforms.RandAffine(15., translate=0.15, shear=[2.,2.]))
     if grayscale:
         transform_list.append(transforms.Grayscale(1))
     if 'fixsize' in opt.preprocess:
