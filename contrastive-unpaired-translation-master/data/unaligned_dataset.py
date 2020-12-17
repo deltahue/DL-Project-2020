@@ -65,7 +65,6 @@ class UnalignedDataset(BaseDataset):
         A_img_numpy[A_img_numpy < 0.] = 0.
         print(A_img_numpy.shape)
         A_img = Image.fromarray((255*A_img_numpy[:,:,0] ).astype(np.uint8))
-        print (A_img[:10,:10])
         #B_img = Image.open(B_path).convert('RGB')
         B_img_nifti = nib.load(B_path)
         B_img_numpy = B_img_nifti.get_fdata(caching = "unchanged")
