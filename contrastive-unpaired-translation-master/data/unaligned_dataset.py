@@ -58,6 +58,7 @@ class UnalignedDataset(BaseDataset):
         #A_img = Image.open(A_path).convert('RGB')
         A_img_nifti = nib.load(A_path)
         A_img_numpy = A_img_nifti.get_fdata(caching = "unchanged")
+        print(A_img_numpy)
         # CHANGE CHANNEL FIRST? 
         A_img_numpy = (A_img_numpy - A_img_numpy.min())/(A_img_numpy.max() - A_img_numpy-min()) #Normalize MR to be in range [0, 255]   
         A_img_numpy[A_img_numpy > 1.] = 1.
