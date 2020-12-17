@@ -149,7 +149,7 @@ class CUTModel(BaseModel):
         if self.opt.flip_equivariance:
             self.flipped_for_equivariance = self.opt.isTrain and (np.random.random() < 0.5)
             if self.flipped_for_equivariance:
-                self.real = torch.flip(self.real, [1])
+                self.real = torch.flip(self.real, [3])
 
         self.fake = self.netG(self.real)
         self.fake_B = self.fake[:self.real_A.size(0)]
@@ -200,7 +200,7 @@ class CUTModel(BaseModel):
         feat_q = self.netG(tgt, self.nce_layers, encode_only=True)
 
         if self.opt.flip_equivariance and self.flipped_for_equivariance:
-            feat_q = [torch.flip(fq, [1]) for fq in feat_q]
+            feat_q = [torch.flip(fq, [3]) for fq in feat_q]
 
         feat_k = self.netG(src, self.nce_layers, encode_only=True)
         feat_k_pool, sample_ids = self.netF(feat_k, self.opt.num_patches, None)
