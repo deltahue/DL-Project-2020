@@ -69,13 +69,10 @@ if __name__ == '__main__':
                 save_result = total_iters % opt.update_html_freq == 0
                 model.compute_visuals()
                 for label, image in model.get_current_visuals().items():
-                    print(label)
-                    print(image)
-                image = image.cpu().detach().numpy()
-                print(image.shape)
-                plt.figure()
-                plt.imshow(image[0,0,:,:])
-                plt.show()
+
+                    image_numpy = util.tensor2im(image)
+                    img_path = os.path.join("hola", 'epoch%.3d_%s.png' % (epoch, label))
+                    util.save_image(image_numpy, img_path)
                 visualizer.display_current_results(model.get_current_visuals(), epoch, save_result)
 
             if total_iters % opt.print_freq == 0:    # print training losses and save logging information to the disk
