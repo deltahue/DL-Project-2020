@@ -64,7 +64,8 @@ class UnalignedDataset(BaseDataset):
         A_img_numpy[A_img_numpy > 1.] = 1.
         A_img_numpy[A_img_numpy < 0.] = 0.
         print(A_img_numpy.shape)
-        A_img = Image.fromarray((255*A_img_numpy[0]).astype(np.uint8))
+        A_img = Image.fromarray((255*A_img_numpy[:,:,0] ).astype(np.uint8))
+        print (A_img[:10,:10])
         #B_img = Image.open(B_path).convert('RGB')
         B_img_nifti = nib.load(B_path)
         B_img_numpy = B_img_nifti.get_fdata(caching = "unchanged")
@@ -72,7 +73,8 @@ class UnalignedDataset(BaseDataset):
         B_img_numpy = (B_img_numpy + 1024.)/4095. #Normalize CT to be in range [0, 255]   
         B_img_numpy[B_img_numpy > 1.] = 1.
         B_img_numpy[B_img_numpy < 0.] = 0.
-        B_img = Image.fromarray(255*np.uint8(B_img_numpy))
+        B_img = Image.fromarray((255*B_img_numpy[:,:,0] ).astype(np.uint8))
+
         # Apply image transformation
         # For FastCUT mode, if in finetuning phase (learning rate is decaying),
         # do not perform resize-crop data augmentation of CycleGAN.
