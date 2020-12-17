@@ -74,18 +74,6 @@ class Visualizer():
             self.plot_data = {}
             self.ncols = opt.display_ncols
             if "tensorboard_base_url" not in os.environ:
-                get_ipython().system_raw('python3 -m pip install visdom')
-                get_ipython().system_raw('python3 -m visdom.server -port 6006 >> visdomlog.txt 2>&1 &')
-                get_ipython().system_raw('lt --port 6006 >> url.txt 2>&1 &')
-                import time
-                time.sleep(5)
-         
-                import visdom
-                time.sleep(5)
-                self.vis = visdom.Visdom(port='6006')
-                print(self.vis)
-                time.sleep(3)
-                self.vis.text('testing')
 
                 self.vis = visdom.Visdom(server=opt.display_server, port=opt.display_port, env=opt.display_env)
                 print(self.vis)
