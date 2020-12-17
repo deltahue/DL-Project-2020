@@ -73,7 +73,7 @@ if __name__ == '__main__':
                     print(image)
                 image = image.cpu().detach().numpy()
                 print(image.shape)
-                plt.imshow(image)
+                plt.imshow(image[0,0,:,:])
                 visualizer.display_current_results(model.get_current_visuals(), epoch, save_result)
 
             if total_iters % opt.print_freq == 0:    # print training losses and save logging information to the disk
