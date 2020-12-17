@@ -63,6 +63,7 @@ class UnalignedDataset(BaseDataset):
         A_img_numpy = (A_img_numpy - np.min(A_img_numpy))/(np.max(A_img_numpy) - np.min(A_img_numpy)) #Normalize MR to be in range [0, 255]
         A_img_numpy[A_img_numpy > 1.] = 1.
         A_img_numpy[A_img_numpy < 0.] = 0.
+        type(A_img_numpy)
         A_img = Image.fromarray(255*np.uint8(A_img_numpy))
         #B_img = Image.open(B_path).convert('RGB')
         B_img_nifti = nib.load(B_path)
