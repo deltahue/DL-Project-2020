@@ -71,7 +71,7 @@ if __name__ == '__main__':
                 for label, image in model.get_current_visuals().items():
                     print(label)
                     print(image)
-                image = image.detach().numpy()
+                image = image.cpu().detach().numpy()
                 print(image.shape)
                 plt.imshow(image)
                 visualizer.display_current_results(model.get_current_visuals(), epoch, save_result)
