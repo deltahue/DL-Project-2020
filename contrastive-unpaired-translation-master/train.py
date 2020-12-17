@@ -5,6 +5,8 @@ from data import create_dataset
 from models import create_model
 from util.visualizer import Visualizer
 import matplotlib.pyplot as plt
+from . import util, html
+
 
 def generate_images(model, test_input):
   prediction = model(test_input, training=True)
