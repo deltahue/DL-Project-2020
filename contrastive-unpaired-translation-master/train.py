@@ -68,11 +68,10 @@ if __name__ == '__main__':
 
                 save_result = total_iters % opt.update_html_freq == 0
                 model.compute_visuals()
+                print(model.get_current_visuals)
                 visualizer.display_current_results(model.get_current_visuals(), epoch, save_result)
 
             if total_iters % opt.print_freq == 0:    # print training losses and save logging information to the disk
-                print(data)
-                generate_images(model, data)
                 losses = model.get_current_losses()
                 visualizer.print_current_losses(epoch, epoch_iter, losses, optimize_time, t_data)
                 if opt.display_id is None or opt.display_id > 0:
