@@ -4,7 +4,7 @@ from options.train_options import TrainOptions
 from data import create_dataset
 from models import create_model
 from util.visualizer import Visualizer
-
+import matplotlib.pyplot as plt
 
 def generate_images(model, test_input):
   prediction = model(test_input, training=True)
@@ -64,14 +64,15 @@ if __name__ == '__main__':
                 torch.cuda.synchronize()
             optimize_time = (time.time() - optimize_start_time) / batch_size * 0.005 + 0.995 * optimize_time
 
-            if total_iters % opt.display_freq == 0:   # display images on visdom and save images to a HTML file
-                print(data)
-                generate_images(model, data)
+            if total_iters % 20 == 0:   # display images on visdom and save images to a HTML file
+
                 save_result = total_iters % opt.update_html_freq == 0
                 model.compute_visuals()
                 visualizer.display_current_results(model.get_current_visuals(), epoch, save_result)
 
             if total_iters % opt.print_freq == 0:    # print training losses and save logging information to the disk
+                # print(data)
+                # generate_images(model, data)
                 losses = model.get_current_losses()
                 visualizer.print_current_losses(epoch, epoch_iter, losses, optimize_time, t_data)
                 if opt.display_id is None or opt.display_id > 0:
