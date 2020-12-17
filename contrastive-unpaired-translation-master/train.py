@@ -6,6 +6,21 @@ from models import create_model
 from util.visualizer import Visualizer
 
 
+def generate_images(model, test_input):
+  prediction = model(test_input, training=True)
+  plt.figure(figsize=(15,15))
+
+  display_list = [test_input[0], prediction[0]]
+  title = ['Input Image', 'Predicted Image']
+
+  for i in range(2):
+    plt.subplot(1, 2, i+1)
+    plt.title(title[i])
+    # getting the pixel values between [0, 1] to plot it.
+    plt.imshow(display_list[i] * 0.5 + 0.5)
+    plt.axis('off')
+  plt.show()
+
 if __name__ == '__main__':
     opt = TrainOptions().parse()   # get training options
     dataset = create_dataset(opt)  # create a dataset given opt.dataset_mode and other options
@@ -50,6 +65,8 @@ if __name__ == '__main__':
             optimize_time = (time.time() - optimize_start_time) / batch_size * 0.005 + 0.995 * optimize_time
 
             if total_iters % opt.display_freq == 0:   # display images on visdom and save images to a HTML file
+                print(data)
+                generate_images(model, data)
                 save_result = total_iters % opt.update_html_freq == 0
                 model.compute_visuals()
                 visualizer.display_current_results(model.get_current_visuals(), epoch, save_result)
