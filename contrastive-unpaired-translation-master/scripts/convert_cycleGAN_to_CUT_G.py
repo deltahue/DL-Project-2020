@@ -7,14 +7,14 @@ Date 28/12/2020
 """
 
 import torch
-import parser
+import os
 
 import argparse
 
 parser = argparse.ArgumentParser(description='Conversion Script')
 parser.add_argument('--cycleGAN_path',  type=str,help='path of the cycleGAN model')
 parser.add_argument('--CUT_path',  type=str,help='path of the cycleGAN model')
-parser.add_argument('--output_path',  type=str,help='path of the cycleGAN model')
+parser.add_argument('--output_path',  type=str, help='path of the cycleGAN model')
 
 args = parser.parse_args()
 
@@ -54,8 +54,9 @@ def implant_weights(model_cycleGAN_path, model_CUT_path, output_path):
     model_adapted['model.30.weight'] = model_CUT['module.model.30.weight']
 
     # TODO: make some checks
+    os.mkdir(output_path)
 
-    torch.save(model_adapted, output_path, _use_new_zipfile_serialization=False)
+    torch.save(model_adapted, output_path+'/latest_net_G.pth', _use_new_zipfile_serialization=False)
 
 
 
