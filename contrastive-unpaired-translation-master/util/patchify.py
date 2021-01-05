@@ -30,7 +30,7 @@ class Patch:
             filled_right = s - (self.right - w)
 
         self.patch = np.zeros((1, s, s, 1))
-        self.patch[:, filled_top:filled_bottom, filled_left:filled_right, :] = img[:, :,
+        self.patch[:, :, filled_top:filled_bottom, filled_left:filled_right] = img[:, :,
                                                                                max(self.top, 0):min(self.bottom, h),
                                                                                max(self.left, 0):min(self.right, w)]
 
