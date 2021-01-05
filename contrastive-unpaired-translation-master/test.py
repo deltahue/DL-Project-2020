@@ -72,7 +72,7 @@ if __name__ == '__main__':
         if i >= opt.num_test:  # only apply our model to opt.num_test images.
             break
 
-        print(data)
+        print(data.numpy().shape)
         print(len(data))
 
         model.set_input(data)  # unpack data from data loader
