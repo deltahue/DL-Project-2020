@@ -79,11 +79,23 @@ if __name__ == '__main__':
 
         print(len(data))
 
-        model.set_input(data)  # unpack data from data loader
-        model.test()           # run inference
-        visuals = model.get_current_visuals()  # get image results
+        real_A = data['A']
+        real_B = data['B']
+
+        patches = patchify.patchify(real_A.numpy(), 4, 256)
+        for p in range(len(patches)):
+            patch = patches[p]
+            data['A'] = torch.tensor(patch.patch)
+            model.set_input(data)  # unpack data from data loader
+            model.test()           # run inference
+            fake_B = model.get_current_visuals()['fake_B']
+            patch.patch = fake_B.numpy()  # get image results
+
+        prediction = patchify.unpatchify(patches, 32 * 4, 500)
 
         print(visuals.keys())
+
+        visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction), 'real_B': real_B}
 
         img_path = model.get_image_paths()     # get image paths
         print(visuals[fake_key])
