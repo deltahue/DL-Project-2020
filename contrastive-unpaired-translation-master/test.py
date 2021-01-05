@@ -89,7 +89,7 @@ if __name__ == '__main__':
             model.set_input(data)  # unpack data from data loader
             model.test()           # run inference
             fake_B = model.get_current_visuals()['fake_B']
-            patch.patch = fake_B.numpy()  # get image results
+            patch.patch = fake_B.cpu().numpy()  # get image results
 
         prediction = patchify.unpatchify(patches, 32 * 4, 500)
 
