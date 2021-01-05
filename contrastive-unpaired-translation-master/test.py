@@ -71,10 +71,15 @@ if __name__ == '__main__':
                 model.eval()
         if i >= opt.num_test:  # only apply our model to opt.num_test images.
             break
+
+        print(data)
+        print(len(data))
+
         model.set_input(data)  # unpack data from data loader
         model.test()           # run inference
         visuals = model.get_current_visuals()  # get image results
 
+        print(visuals.keys())
 
         img_path = model.get_image_paths()     # get image paths
         print(visuals[fake_key])
