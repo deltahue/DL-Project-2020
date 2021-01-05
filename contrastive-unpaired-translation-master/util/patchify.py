@@ -29,8 +29,8 @@ class Patch:
         if self.right > w:
             filled_right = s - (self.right - w)
 
-        self.patch = np.zeros((1, s, s, 1))
-        self.patch[:, :, filled_top:filled_bottom, filled_left:filled_right] = img[:, :,max(self.top, 0):min(self.bottom, h),max(self.left, 0):min(self.right, w)]
+        self.patch = np.zeros((1, 1, s, s))
+        self.patch[:, :, filled_top:filled_bottom, filled_left:filled_right] = img[:, :,max(self.top, 0):min(self.bottom, h), max(self.left, 0):min(self.right, w)]
 
 
 def patchify(img, n, patch_size):
@@ -45,8 +45,8 @@ def patchify(img, n, patch_size):
 
 def unpatchify(patches, crop, s):
     # UNPATCHIFY
-    img_reconstructed = np.zeros((1, 500 + s + 500, 500 + s + 500, 1))
-    img_reconstructed_count = np.zeros((1, 500 + s + 500, 500 + s + 500, 1))
+    img_reconstructed = np.zeros((1, 1, 500 + s + 500, 500 + s + 500))
+    img_reconstructed_count = np.zeros((1, 1, 500 + s + 500, 500 + s + 500))
 
     for patch in patches:
         l, r, t, b = patch.left + crop // 4, patch.right - crop // 4, patch.top + crop // 4, patch.bottom - crop // 4
