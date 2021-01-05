@@ -77,7 +77,7 @@ if __name__ == '__main__':
 
         # apply metrics        
         metricMAE(visuals[fake_key], visuals[real_key])
-        metricMSE(visuals[fake_key], visuals[real_key])
+        metricMSE(visuals[fake_key], vi suals[real_key])
 
         
         if i % 5 == 0:  # save images to an HTML file
