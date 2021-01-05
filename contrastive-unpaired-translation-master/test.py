@@ -93,7 +93,6 @@ if __name__ == '__main__':
 
         prediction = patchify.unpatchify(patches, 32 * 4, 500)
 
-        print(visuals.keys())
 
         visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction).type(torch.cuda.FloatTensor), 'real_B': real_B}
 
@@ -117,10 +116,10 @@ if __name__ == '__main__':
     print('MSE: ', mse)
 
     fid_paths =  [os.path.join(web_dir, 'images', fake_key), os.path.join(web_dir, 'images', real_key)]
-    fid_value = fid_score.calculate_fid_given_paths(fid_paths,
-                                                    batch_size=50,
-                                                    device=None,
-                                                    dims=2048)
-    print('FID: ', fid_value)
+    # fid_value = fid_score.calculate_fid_given_paths(fid_paths,
+    #                                                 batch_size=50,
+    #                                                 device=None,
+    #                                                 dims=2048)
+    # print('FID: ', fid_value)
 
 
