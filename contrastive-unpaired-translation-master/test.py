@@ -73,6 +73,10 @@ if __name__ == '__main__':
             break
 
         print(data.keys())
+        print(data['A'])
+        print(data['A'].numpy().shape)
+        print(data['A'].shape)
+
         print(len(data))
 
         model.set_input(data)  # unpack data from data loader
