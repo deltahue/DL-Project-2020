@@ -33,9 +33,9 @@ if __name__ == '__main__':
     # dataset2 = create_dataset(opt2)  # create a dataset given opt.dataset_mode and other options
     # model2 = create_model(opt2)      # create a model given opt.model and other options
     # create a webpage for viewing the results
-    web_dir = os.path.join(opt2.results_dir, opt2.name, '{}_{}'.format(opt2.phase, opt2.epoch))  # define the website directory
-    print('creating web directory', web_dir)
-    webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt2.name, opt2.phase, opt2.epoch))
+    # web_dir = os.path.join(opt2.results_dir, opt2.name, '{}_{}'.format(opt2.phase, opt2.epoch))  # define the website directory
+    # print('creating web directory', web_dir)
+    # webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt2.name, opt2.phase, opt2.epoch))
 
     for epoch in range(opt.epoch_count, opt.n_epochs + opt.n_epochs_decay + 1):    # outer loop for different epochs; we save the model by <epoch_count>, <epoch_count>+<save_latest_freq>
         epoch_start_time = time.time()  # timer for entire epoch

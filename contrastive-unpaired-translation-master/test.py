@@ -34,6 +34,7 @@ from util.visualizer import save_images
 from util import html
 import util.util as util
 import torch
+import util.patchify as patchify
 
 from pytorch_lightning import metrics
 import pytorch_fid
@@ -77,7 +78,7 @@ if __name__ == '__main__':
 
         # apply metrics        
         metricMAE(visuals[fake_key], visuals[real_key])
-        metricMSE(visuals[fake_key], vi suals[real_key])
+        metricMSE(visuals[fake_key], visuals[real_key])
 
         
         if i % 5 == 0:  # save images to an HTML file
