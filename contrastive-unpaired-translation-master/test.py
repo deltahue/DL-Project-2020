@@ -33,6 +33,7 @@ from models import create_model
 from util.visualizer import save_images
 from util import html
 import util.util as util
+import torch
 
 from pytorch_lightning import metrics
 import pytorch_fid
@@ -54,8 +55,12 @@ if __name__ == '__main__':
     print('creating web directory', web_dir)
     webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.epoch))
 
-    metricMAE = metrics.MeanAbsoluteError()
-    metricMSE = metrics.MeanSquaredError()
+    # prepare metrics
+    fake_key = 'fake_' + opt.direction[-1]
+    real_key = 'real_' + opt.direction[-1]
+
+    metricMAE = metrics.MeanAbsoluteError().to(torch.device('cuda:{}'.format(opt.gpu_ids[0])) if opt.gpu_ids else torch.device('cpu'))
+    metricMSE = metrics.MeanSquaredError().to(torch.device('cuda:{}'.format(opt.gpu_ids[0])) if opt.gpu_ids else torch.device('cpu'))
     for i, data in enumerate(dataset):
         if i == 0:
             model.data_dependent_initialize(data)
@@ -70,10 +75,7 @@ if __name__ == '__main__':
         visuals = model.get_current_visuals()  # get image results
         img_path = model.get_image_paths()     # get image paths
 
-        # apply metrics
-        #     visuals (OrderedDict)    -- an ordered dictionary that stores (name, images (either tensor or numpy) ) pairs
-        fake_key = 'fake' + opt.direction[-1]
-        real_key = 'real' + opt.direction[-1]
+        # apply metrics        
         metricMAE(visuals[fake_key], visuals[real_key])
         metricMSE(visuals[fake_key], visuals[real_key])
 
@@ -83,15 +85,15 @@ if __name__ == '__main__':
         save_images(webpage, visuals, img_path, width=opt.display_winsize)
     webpage.save()  # save the HTML
 
+    # compute metrics
     mae = metricMAE.compute()
     mse = metricMSE.compute()
 
     print('MAE: ', mae)
     print('MSE: ', mse)
-    print(os.path.join(web_dir, fake_key)) 
 
-    fid_paths =  [os.path.join(web_dir, fake_key), os.path.join(web_dir, real_key)]
-    fid_value = fid_score.calculate_fid_given_paths(paths,
+    fid_paths =  [os.path.join(web_dir, 'images', fake_key), os.path.join(web_dir, 'images', real_key)]
+    fid_value = fid_score.calculate_fid_given_paths(fid_paths,
                                                     batch_size=50,
                                                     device=None,
                                                     dims=2048)
