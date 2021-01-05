@@ -43,6 +43,7 @@ if __name__ == '__main__':
         epoch_iter = 0                  # the number of training iterations in current epoch, reset to 0 every epoch
         visualizer.reset()              # reset the visualizer: make sure it saves the results to HTML at least once every epoch
 
+        opt.save_latest_freq = 2
         dataset.set_epoch(epoch)
         for i, data in enumerate(dataset):  # inner loop within one epoch
             print(i)
