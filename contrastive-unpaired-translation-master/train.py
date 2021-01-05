@@ -21,6 +21,22 @@ if __name__ == '__main__':
     optimize_time = 0.1
 
     times = []
+
+    # VALIDATION DATASET HERE BEFORE STARTING THE EPOCHS
+    opt2 = TestOptions().parse()  # get test options
+    # hard-code some parameters for test
+    opt2.num_threads = 1   # test code only supports num_threads = 1
+    opt2.batch_size = 1    # test code only supports batch_size = 1
+    opt2.serial_batches = True  # disable data shuffling; comment this line if results on randomly chosen images are needed.
+    opt2.no_flip = True    # no flip; comment this line if results on flipped images are needed.
+    opt2.display_id = -1   # no visdom display; the test code saves the results to a HTML file.
+    dataset2 = create_dataset(opt2)  # create a dataset given opt.dataset_mode and other options
+    model2 = create_model(opt2)      # create a model given opt.model and other options
+    # create a webpage for viewing the results
+    web_dir = os.path.join(opt2.results_dir, opt2.name, '{}_{}'.format(opt2.phase, opt2.epoch))  # define the website directory
+    print('creating web directory', web_dir)
+    webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt2.name, opt2.phase, opt2.epoch))
+
     for epoch in range(opt.epoch_count, opt.n_epochs + opt.n_epochs_decay + 1):    # outer loop for different epochs; we save the model by <epoch_count>, <epoch_count>+<save_latest_freq>
         epoch_start_time = time.time()  # timer for entire epoch
         iter_data_time = time.time()    # timer for data loading per iteration
@@ -75,3 +91,22 @@ if __name__ == '__main__':
 
         print('End of epoch %d / %d \t Time Taken: %d sec' % (epoch, opt.n_epochs + opt.n_epochs_decay, time.time() - epoch_start_time))
         model.update_learning_rate()                     # update learning rates at the end of every epoch.
+
+        # GET VALIDATION DATA, EVALUATE METRICS HERE AND PRINT THEM
+        for i2, data2 in enumerate(dataset2):
+            if i == 0:
+                model2.data_dependent_initialize(data)
+                model2.setup(opt)               # regular setup: load and print networks; create schedulers
+                model2.parallelize()
+                if opt2.eval:
+                    model2.eval()
+            if i >= opt2.num_test:  # only apply our model to opt.num_test images.
+                break
+            model2.set_input(data2)  # unpack data from data loader
+            model2.test()           # run inference
+            visuals = model2.get_current_visuals()  # get image results
+            img_path = model2.get_image_paths()     # get image paths
+            if i % 5 == 0:  # save images to an HTML file
+                print('processing (%04d)-th image... %s' % (i, img_path))
+            save_images(webpage, visuals, img_path, width=opt2.display_winsize)
+        webpage.save()  # save the HTML
