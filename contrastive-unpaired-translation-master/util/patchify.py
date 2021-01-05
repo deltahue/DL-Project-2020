@@ -8,8 +8,8 @@ class Patch:
     # s -> patch size
     def __init__(self, img, i, j, n, s):
 
-        h = img.shape[1]  # Height of initial image
-        w = img.shape[2]  # Width of initial image
+        h = img.shape[2]  # Height of initial image
+        w = img.shape[3]  # Width of initial image
 
         x = h // n * (2 * i + 1) // 2  # x Pixel coordinate of patch center
         y = w // n * (2 * j + 1) // 2  # y Pixel coordinate of patch center
