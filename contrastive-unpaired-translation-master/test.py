@@ -94,7 +94,7 @@ if __name__ == '__main__':
         prediction = patchify.unpatchify(patches, 32 * 4, 500)
 
 
-        visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction).type(torch.cuda.FloatTensor), 'real_B': real_B}
+        visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction), 'real_B': real_B}
 
         img_path = model.get_image_paths()     # get image paths
         print(visuals[fake_key])
