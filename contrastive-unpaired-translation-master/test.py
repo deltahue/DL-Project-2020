@@ -34,6 +34,9 @@ from util.visualizer import save_images
 from util import html
 import util.util as util
 
+from pytorch_lightning import metrics
+import pytorch_fid
+
 
 if __name__ == '__main__':
     opt = TestOptions().parse()  # get test options
@@ -51,6 +54,8 @@ if __name__ == '__main__':
     print('creating web directory', web_dir)
     webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.epoch))
 
+    metricMAE = metrics.MeanAbsoluteError()
+    metricMSE = metrics.MeanSquaredError()
     for i, data in enumerate(dataset):
         if i == 0:
             model.data_dependent_initialize(data)
@@ -64,7 +69,32 @@ if __name__ == '__main__':
         model.test()           # run inference
         visuals = model.get_current_visuals()  # get image results
         img_path = model.get_image_paths()     # get image paths
+
+        # apply metrics
+        #     visuals (OrderedDict)    -- an ordered dictionary that stores (name, images (either tensor or numpy) ) pairs
+        fake_key = 'fake' + opt.direction[-1]
+        real_key = 'real' + opt.direction[-1]
+        metricMAE(visuals[fake_key], visuals[real_key])
+        metricMSE(visuals[fake_key], visuals[real_key])
+
+        
         if i % 5 == 0:  # save images to an HTML file
             print('processing (%04d)-th image... %s' % (i, img_path))
         save_images(webpage, visuals, img_path, width=opt.display_winsize)
     webpage.save()  # save the HTML
+
+    mae = metricMAE.compute()
+    mse = metricMSE.compute()
+
+    print('MAE: ', mae)
+    print('MSE: ', mse)
+    print(os.path.join(web_dir, fake_key)) 
+
+    fid_paths =  [os.path.join(web_dir, fake_key), os.path.join(web_dir, real_key)]
+    fid_value = fid_score.calculate_fid_given_paths(paths,
+                                                    batch_size=50,
+                                                    device=None,
+                                                    dims=2048)
+    print('FID: ', fid_value)
+
+
