@@ -74,8 +74,10 @@ if __name__ == '__main__':
         model.set_input(data)  # unpack data from data loader
         model.test()           # run inference
         visuals = model.get_current_visuals()  # get image results
-        img_path = model.get_image_paths()     # get image paths
 
+
+        img_path = model.get_image_paths()     # get image paths
+        print(visuals[fake_key])
         # apply metrics        
         metricMAE(visuals[fake_key], visuals[real_key])
         metricMSE(visuals[fake_key], visuals[real_key])
