@@ -85,7 +85,7 @@ if __name__ == '__main__':
         patches = patchify.patchify(real_A.numpy(), 4, 256)
         for p in range(len(patches)):
             patch = patches[p]
-            data['A'] = torch.tensor(patch.patch)
+            data['A'] = torch.tensor(patch.patch).type(torch.cuda.FloatTensor)
             model.set_input(data)  # unpack data from data loader
             model.test()           # run inference
             fake_B = model.get_current_visuals()['fake_B']
@@ -95,7 +95,7 @@ if __name__ == '__main__':
 
         print(visuals.keys())
 
-        visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction), 'real_B': real_B}
+        visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction).type(torch.cuda.FloatTensor), 'real_B': real_B}
 
         img_path = model.get_image_paths()     # get image paths
         print(visuals[fake_key])
