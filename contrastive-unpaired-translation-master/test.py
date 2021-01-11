@@ -69,49 +69,51 @@ if __name__ == '__main__':
     metricMAE = metrics.MeanAbsoluteError().to(torch.device('cuda:{}'.format(opt.gpu_ids[0])) if opt.gpu_ids else torch.device('cpu'))
     metricMSE = metrics.MeanSquaredError().to(torch.device('cuda:{}'.format(opt.gpu_ids[0])) if opt.gpu_ids else torch.device('cpu'))
     for i, data in enumerate(dataset):
+
+
         if i == 0:
             # model.data_dependent_initialize(data)
             model.setup(opt)               # regular setup: load and print networks; create schedulers
             # model.parallelize()
             # if opt.eval:
             #     model.eval()
-        if i >= opt.num_test:  # only apply our model to opt.num_test images.
-            break
+        # if i >= opt.num_test:  # only apply our model to opt.num_test images.
+        #     break
+
+        if i > 40:
+
+            real_A = data['A']
+            real_B = data['B']
+            print('input', real_A.numpy())
+    
+            patches = patchify.patchify(real_A.numpy(), 2, 256)
+            for p in range(len(patches)):
+                patch = patches[p]
+                data['A'] = torch.tensor(patch.patch).type(torch.FloatTensor)
+                model.set_input(data)  # unpack data from data loader
+                model.real_A = torch.tensor(patch.patch).type(torch.FloatTensor)
+                model.test()           # run inference
+                time.sleep(.5)
+                print(model.fake_B.shape)
+                fake_B = model.get_current_visuals()['fake_B']
+                patch.patch = fake_B.cpu().numpy()  # get image results
+                print(patch.patch.shape)
+            print(len(patches))
+            prediction = patchify.unpatchify(patches, 8, 500)
 
 
+            visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction), 'real_B': real_B}
 
-        real_A = data['A']
-        real_B = data['B']
-        print('input', real_A.numpy())
-
-        patches = patchify.patchify(real_A.numpy(), 2, 256)
-        for p in range(len(patches)):
-            patch = patches[p]
-            data['A'] = torch.tensor(patch.patch).type(torch.FloatTensor)
-            model.set_input(data)  # unpack data from data loader
-            model.real_A = torch.tensor(patch.patch).type(torch.FloatTensor)
-            model.test()           # run inference
-            time.sleep(.5)
-            print(model.fake_B.shape)
-            fake_B = model.get_current_visuals()['fake_B']
-            patch.patch = fake_B.cpu().numpy()  # get image results
-            print(patch.patch.shape)
-        print(len(patches))
-        prediction = patchify.unpatchify(patches, 8, 500)
+            img_path = model.get_image_paths()     # get image paths
+            print('prediction', visuals[fake_key])
+            # apply metrics
+            metricMAE(visuals[fake_key], visuals[real_key])
+            metricMSE(visuals[fake_key], visuals[real_key])
 
 
-        visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction), 'real_B': real_B}
-
-        img_path = model.get_image_paths()     # get image paths
-        print('prediction', visuals[fake_key])
-        # apply metrics
-        metricMAE(visuals[fake_key], visuals[real_key])
-        metricMSE(visuals[fake_key], visuals[real_key])
-
-
-        if i % 5 == 0:  # save images to an HTML file
-            print('processing (%04d)-th image... %s' % (i, img_path))
-        save_images(webpage, visuals, img_path, width=opt.display_winsize)
+            if i % 5 == 0:  # save images to an HTML file
+                print('processing (%04d)-th image... %s' % (i, img_path))
+            save_images(webpage, visuals, img_path, width=opt.display_winsize)
     webpage.save()  # save the HTML
 
     # compute metrics
