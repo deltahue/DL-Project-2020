@@ -69,12 +69,12 @@ if __name__ == '__main__':
     metricMAE = metrics.MeanAbsoluteError().to(torch.device('cuda:{}'.format(opt.gpu_ids[0])) if opt.gpu_ids else torch.device('cpu'))
     metricMSE = metrics.MeanSquaredError().to(torch.device('cuda:{}'.format(opt.gpu_ids[0])) if opt.gpu_ids else torch.device('cpu'))
     for i, data in enumerate(dataset):
-        # if i == 0:
-        #     model.data_dependent_initialize(data)
-        #     model.setup(opt)               # regular setup: load and print networks; create schedulers
-        #     model.parallelize()
-        #     if opt.eval:
-        #         model.eval()
+        if i == 0:
+            model.data_dependent_initialize(data)
+            model.setup(opt)               # regular setup: load and print networks; create schedulers
+            # model.parallelize()
+            # if opt.eval:
+            #     model.eval()
         if i >= opt.num_test:  # only apply our model to opt.num_test images.
             break
 
