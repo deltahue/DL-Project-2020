@@ -58,9 +58,9 @@ if __name__ == '__main__':
     # train_dataset = create_dataset(util.copyconf(opt, phase="train"))
     model = create_model(opt)      # create a model given opt.model and other options
     # create a webpage for viewing the results
-    # web_dir = os.path.join(opt.results_dir, opt.name, '{}_{}'.format(opt.phase, opt.epoch))  # define the website directory
+    web_dir = os.path.join(opt.results_dir, opt.name, '{}_{}'.format(opt.phase, opt.epoch))  # define the website directory
     # print('creating web directory', web_dir)
-    # webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.epoch))
+    webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.epoch))
 
     # prepare metrics
     fake_key = 'fake_' + opt.direction[-1]
@@ -115,8 +115,8 @@ if __name__ == '__main__':
 
         if i % 5 == 0:  # save images to an HTML file
             print('processing (%04d)-th image... %s' % (i, img_path))
-        # save_images(webpage, visuals, img_path, width=opt.display_winsize)
-    # webpage.save()  # save the HTML
+        save_images(webpage, visuals, img_path, width=opt.display_winsize)
+    webpage.save()  # save the HTML
 
     # compute metrics
     mae = metricMAE.compute()
