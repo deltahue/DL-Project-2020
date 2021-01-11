@@ -73,14 +73,14 @@ if __name__ == '__main__':
             break
 
         print(data.keys())
-        print(data['A_paths'])
         print(data['A'].numpy().shape)
         print(data['A'].shape)
 
-        print(len(data))
+
 
         real_A = data['A']
         real_B = data['B']
+        print('input', real_A.numpy())
 
         patches = patchify.patchify(real_A.numpy(), 4, 256)
         for p in range(len(patches)):
@@ -97,7 +97,7 @@ if __name__ == '__main__':
         visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction), 'real_B': real_B}
 
         img_path = model.get_image_paths()     # get image paths
-        print(visuals[fake_key])
+        print('prediction', visuals[fake_key])
         # apply metrics        
         metricMAE(visuals[fake_key], visuals[real_key])
         metricMSE(visuals[fake_key], visuals[real_key])
