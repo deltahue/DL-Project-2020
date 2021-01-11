@@ -84,7 +84,7 @@ def get_transform(opt, params=None, grayscale=True, data_augmentation = True, me
     transform_list = []
     if data_augmentation:
         transform_list.append(transforms.RandomAffine(5.,scale = [0.9,1.1],shear=[0.97,1.03]))
-
+        # transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base=4, method=method)))
     # if grayscale:
     #     transform_list.append(transforms.Grayscale(1))
     if 'fixsize' in opt.preprocess:
