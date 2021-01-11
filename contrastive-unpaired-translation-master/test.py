@@ -91,7 +91,7 @@ if __name__ == '__main__':
             fake_B = model.get_current_visuals()['fake_B']
             patch.patch = fake_B.cpu().numpy()  # get image results
 
-        prediction = patchify.unpatchify(patches, 32 * 4, 500)
+        prediction = patchify.unpatchify(patches, 8, 500)
 
 
         visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction), 'real_B': real_B}
