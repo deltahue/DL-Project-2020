@@ -93,6 +93,7 @@ if __name__ == '__main__':
             patch = patches[p]
             data['A'] = torch.tensor(patch.patch).type(torch.cuda.FloatTensor)
             model.set_input(data)  # unpack data from data loader
+            model.real_A =torch.tensor(patch.patch).type(torch.cuda.FloatTensor)
             model.test()           # run inference
             print(model.fake_B.shape)
             fake_B = model.fake_B
