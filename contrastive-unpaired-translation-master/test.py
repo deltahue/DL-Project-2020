@@ -88,7 +88,7 @@ if __name__ == '__main__':
         real_B = data['B']
         print('input', real_A.numpy())
 
-        patches = patchify.patchify(real_A.numpy(), 4, 128)
+        patches = patchify.patchify(real_A.numpy(), 2, 256)
         for p in range(len(patches)):
             patch = patches[p]
             data['A'] = torch.tensor(patch.patch).type(torch.cuda.FloatTensor)
