@@ -131,15 +131,17 @@ class UnalignedDataset(BaseDataset):
         A_img_numpy = 255*A_img_numpy
         A_img_numpy = A_img_numpy.astype(np.uint8)
         A_img = Image.fromarray(A_img_numpy)
-        # Random crop
-        i, j, h, w = transforms.RandomCrop.get_params(A_img, output_size=(self.opt.crop_size,self.opt.crop_size))
-        A_crop = TF.crop(A_img, i, j, h, w)
-        for i in range(50):
-            if not A_crop.getbbox():
-                i, j, h, w = transforms.RandomCrop.get_params(A_img, output_size=(self.opt.crop_size, self.opt.crop_size))
-                A_crop = TF.crop(A_img, i, j, h, w)
-            else:
-                break
+
+        if self.opt.isTrain:
+            # Random crop
+            i, j, h, w = transforms.RandomCrop.get_params(A_img, output_size=(self.opt.crop_size,self.opt.crop_size))
+            A_crop = TF.crop(A_img, i, j, h, w)
+            for i in range(50):
+                if not A_crop.getbbox():
+                    i, j, h, w = transforms.RandomCrop.get_params(A_img, output_size=(self.opt.crop_size, self.opt.crop_size))
+                    A_crop = TF.crop(A_img, i, j, h, w)
+                else:
+                    break
         #B_img = Image.open(B_path).convert('RGB')
         # B_img_nifti = nib.load(B_path)
         # B_img_numpy = B_img_nifti.get_fdata(caching = "unchanged")
@@ -155,16 +157,21 @@ class UnalignedDataset(BaseDataset):
         B_img_numpy = 255*B_img_numpy
         B_img_numpy = B_img_numpy.astype(np.uint8)
         B_img = Image.fromarray(B_img_numpy)
-        B_crop = TF.crop(B_img, i, j, h, w)
+        if self.opt.isTrain:
+            B_crop = TF.crop(B_img, i, j, h, w)
         # Apply image transformation
         # For FastCUT mode, if in finetuning phase (learning rate is decaying),
         # do not perform resize-crop data augmentation of CycleGAN.
 #        print('current_epoch', self.current_epoch)
-        is_finetuning = self.opt.isTrain and self.current_epoch > self.opt.n_epochs
-        modified_opt = util.copyconf(self.opt, load_size=self.opt.crop_size if is_finetuning else self.opt.load_size)
-        transform = get_transform(modified_opt)
-        A = transform(A_crop)
-        B = transform(B_crop)
+            is_finetuning = self.opt.isTrain and self.current_epoch > self.opt.n_epochs
+            modified_opt = util.copyconf(self.opt, load_size=self.opt.crop_size if is_finetuning else self.opt.load_size)
+            transform = get_transform(modified_opt)
+            A = transform(A_crop)
+            B = transform(B_crop)
+        else:
+            transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
+            A = transform(A_img)
+            B = transform(A_img)
         # A = torch.unsqueeze(A, dim = 3)
         # B = torch.unsqueeze(B, dim = 3)
         # el_def = RandomElasticDeformation(num_control_points=6, locked_borders=2)
