@@ -46,6 +46,7 @@ from pytorch_lightning import metrics
 import pytorch_fid
 import matplotlib.pyplot as plt
 
+import numpy as np
 
 if __name__ == '__main__':
     opt = TestOptions().parse()  # get test options
@@ -89,18 +90,16 @@ if __name__ == '__main__':
 
             patches = patchify.patchify(real_A.numpy(), 2, 256)
             for p in range(len(patches)):
-                if p > 1:
 
-                    patch = patches[p]
-                    data['A'] = torch.tensor(patch.patch).type(torch.FloatTensor)
+                patch = patches[p]
 
-                    plt.imsave('/content/input/'+str(p)+'_v3.jpeg', patch.patch[0,0,:,:])
-                    model.set_input(data)  # unpack data from data loader
-                    model.test()           # run inference
-                    fake_B = model.fake_B.clone().detach()
-                    plt.imsave('/content/output/'+str(p)+'_v3.jpeg', fake_B[0,0,:,:])
-                    patch.patch = fake_B.cpu().numpy()  # get image results
-                    print(patch.patch.shape)
+                transposed = np.transpose(patch, (2,3))
+                data['A'] = torch.tensor(patch.patch.T).type(torch.FloatTensor)
+                model.set_input(data)  # unpack data from data loader
+                model.test()           # run inference
+                fake_B = model.fake_B.clone().detach()
+                patch.patch = fake_B.cpu().numpy()  # get image results
+                print(patch.patch.shape)
             print(len(patches))
             prediction = patchify.unpatchify(patches, 8, 500)
 
