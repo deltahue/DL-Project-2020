@@ -96,7 +96,7 @@ if __name__ == '__main__':
             model.test()           # run inference
             time.sleep(.5)
             fake_B = model.get_current_visuals()['fake_B']
-            patch.patch = fake_B.cpu().numpy()  # get image results
+            # patch.patch = fake_B.cpu().numpy()  # get image results
             print(patch.patch.shape)
         print(len(patches))
         prediction = patchify.unpatchify(patches, 8, 500)
