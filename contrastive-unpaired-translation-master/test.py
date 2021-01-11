@@ -89,6 +89,8 @@ if __name__ == '__main__':
 
             patches = patchify.patchify(real_A.numpy(), 2, 256)
             for p in range(len(patches)):
+                if p < 2:
+                    pass
                 patch = patches[p]
                 data['A'] = torch.tensor(patch.patch).type(torch.FloatTensor)
 
