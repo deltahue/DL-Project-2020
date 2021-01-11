@@ -91,13 +91,12 @@ if __name__ == '__main__':
             for p in range(len(patches)):
                 patch = patches[p]
                 data['A'] = torch.tensor(patch.patch).type(torch.FloatTensor)
-                plt.imshow(patch.patch)
-                plt.show()
+
+                plt.imsave('/content/input/'+str(p)+'.jpeg', patch.patch[0,0,:,:])
                 model.set_input(data)  # unpack data from data loader
                 model.test()           # run inference
                 fake_B = model.fake_B.clone().detach()
-                plt.imshow(fake_B)
-                plt.show()
+                plt.imsave('/content/output/'+str(p)+'.jpeg', fake_B[0,0,:,:])
                 patch.patch = fake_B.cpu().numpy()  # get image results
                 print(patch.patch.shape)
             print(len(patches))
