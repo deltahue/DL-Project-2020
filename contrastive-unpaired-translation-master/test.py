@@ -88,12 +88,12 @@ if __name__ == '__main__':
         real_B = data['B']
         print('input', real_A.numpy())
 
-        patches = patchify.patchify(real_A.numpy(), 2, 256)
+        patches = patchify.patchify(real_A.numpy(), 1, 256)
         for p in range(len(patches)):
             patch = patches[p]
             data['A'] = torch.tensor(patch.patch).type(torch.cuda.FloatTensor)
             model.set_input(data)  # unpack data from data loader
-            model.real_A =torch.tensor(patch.patch).type(torch.cuda.FloatTensor)
+            model.real_A = torch.tensor(patch.patch).type(torch.cuda.FloatTensor)
             model.test()           # run inference
             time.sleep(.5)
             print(model.fake_B.shape)
