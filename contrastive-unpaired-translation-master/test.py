@@ -78,14 +78,14 @@ if __name__ == '__main__':
             # if opt.eval:
             #     model.eval()
         # if i >= opt.num_test:  # only apply our model to opt.num_test images.
-        #     break
+            # break
 
-        if i > 40:
+
 
             real_A = data['A']
             real_B = data['B']
             print('input', real_A.numpy())
-    
+
             patches = patchify.patchify(real_A.numpy(), 2, 256)
             for p in range(len(patches)):
                 patch = patches[p]
@@ -111,9 +111,9 @@ if __name__ == '__main__':
             metricMSE(visuals[fake_key], visuals[real_key])
 
 
-            if i % 5 == 0:  # save images to an HTML file
-                print('processing (%04d)-th image... %s' % (i, img_path))
-            save_images(webpage, visuals, img_path, width=opt.display_winsize)
+        if i % 5 == 0:  # save images to an HTML file
+            print('processing (%04d)-th image... %s' % (i, img_path))
+        save_images(webpage, visuals, img_path, width=opt.display_winsize)
     webpage.save()  # save the HTML
 
     # compute metrics
