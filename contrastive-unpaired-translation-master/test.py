@@ -94,7 +94,7 @@ if __name__ == '__main__':
             data['A'] = torch.tensor(patch.patch).type(torch.cuda.FloatTensor)
             model.set_input(data)  # unpack data from data loader
             model.test()           # run inference
-            time.sleep(.5)
+            print(model.get_current_visuals().keys())
             fake_B = model.get_current_visuals()['fake_B']
             # patch.patch = fake_B.cpu().numpy()  # get image results
             print(patch.patch.shape)
