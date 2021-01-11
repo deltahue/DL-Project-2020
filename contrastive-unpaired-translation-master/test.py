@@ -93,7 +93,7 @@ if __name__ == '__main__':
 
                 patch = patches[p]
 
-                transposed = np.transpose(patch.patch, (2,3))
+                transposed = np.transpose(patch.patch, axes=(0,1,3,2))
                 data['A'] = torch.tensor(transposed).type(torch.FloatTensor)
                 model.set_input(data)  # unpack data from data loader
                 model.test()           # run inference
