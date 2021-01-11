@@ -44,6 +44,7 @@ import util.patchify as patchify
 import time
 from pytorch_lightning import metrics
 import pytorch_fid
+import matplotlib.pyplot as plt
 
 
 if __name__ == '__main__':
@@ -84,16 +85,19 @@ if __name__ == '__main__':
 
             real_A = data['A']
             real_B = data['B']
-            print('input', real_A.numpy())
+            print(data.keys())
 
             patches = patchify.patchify(real_A.numpy(), 2, 256)
             for p in range(len(patches)):
                 patch = patches[p]
                 data['A'] = torch.tensor(patch.patch).type(torch.FloatTensor)
+                plt.imshow(patch.patch)
+                plt.show()
                 model.set_input(data)  # unpack data from data loader
-                model.real_A = torch.tensor(patch.patch).type(torch.FloatTensor)
                 model.test()           # run inference
                 fake_B = model.fake_B.clone().detach()
+                plt.imshow(fake_B)
+                plt.show()
                 patch.patch = fake_B.cpu().numpy()  # get image results
                 print(patch.patch.shape)
             print(len(patches))
