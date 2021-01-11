@@ -41,7 +41,7 @@ from util import html
 import util.util as util
 import torch
 import util.patchify as patchify
-
+import time
 from pytorch_lightning import metrics
 import pytorch_fid
 
@@ -94,6 +94,7 @@ if __name__ == '__main__':
             data['A'] = torch.tensor(patch.patch).type(torch.cuda.FloatTensor)
             model.set_input(data)  # unpack data from data loader
             model.test()           # run inference
+            time.sleep(.5)
             fake_B = model.get_current_visuals()['fake_B']
             patch.patch = fake_B.cpu().numpy()  # get image results
             print('output', p, patch.patch)
