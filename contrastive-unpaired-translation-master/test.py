@@ -72,11 +72,11 @@ if __name__ == '__main__':
 
 
         if i == 0:
-            # model.data_dependent_initialize(data)
+            model.data_dependent_initialize(data)
             model.setup(opt)               # regular setup: load and print networks; create schedulers
-            # model.parallelize()
-            # if opt.eval:
-            #     model.eval()
+            model.parallelize()
+            if opt.eval:
+                model.eval()
         # if i >= opt.num_test:  # only apply our model to opt.num_test images.
             # break
 
@@ -93,9 +93,7 @@ if __name__ == '__main__':
                 model.set_input(data)  # unpack data from data loader
                 model.real_A = torch.tensor(patch.patch).type(torch.FloatTensor)
                 model.test()           # run inference
-                time.sleep(.5)
-                print(model.fake_B.shape)
-                fake_B = model.get_current_visuals()['fake_B']
+                fake_B = model.fake_B.clone().detach()
                 patch.patch = fake_B.cpu().numpy()  # get image results
                 print(patch.patch.shape)
             print(len(patches))
