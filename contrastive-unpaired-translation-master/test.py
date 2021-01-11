@@ -95,7 +95,7 @@ if __name__ == '__main__':
             model.set_input(data)  # unpack data from data loader
             model.test()           # run inference
             print(model.fake_B.shape)
-            fake_B = model.real_A
+            fake_B = model.real_B
             patch.patch = fake_B.cpu().numpy()  # get image results
             print(patch.patch.shape)
         print(len(patches))
