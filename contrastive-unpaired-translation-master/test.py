@@ -93,8 +93,8 @@ if __name__ == '__main__':
 
                 patch = patches[p]
 
-                transposed = np.transpose(patch, (2,3))
-                data['A'] = torch.tensor(patch.patch.T).type(torch.FloatTensor)
+                transposed = np.transpose(patch.patch, (2,3))
+                data['A'] = torch.tensor(transposed).type(torch.FloatTensor)
                 model.set_input(data)  # unpack data from data loader
                 model.test()           # run inference
                 fake_B = model.fake_B.clone().detach()
