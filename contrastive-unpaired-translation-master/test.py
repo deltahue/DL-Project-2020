@@ -73,7 +73,7 @@ if __name__ == '__main__':
             break
 
         print(data.keys())
-        print(data['A'])
+        print(data['A_paths'])
         print(data['A'].numpy().shape)
         print(data['A'].shape)
 
