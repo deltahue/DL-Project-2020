@@ -97,7 +97,7 @@ if __name__ == '__main__':
             model.test()           # run inference
             time.sleep(.5)
             print(model.fake_B.shape)
-            fake_B = model.fake_B
+            fake_B = model.real_A
             patch.patch = fake_B.cpu().numpy()  # get image results
             print(patch.patch.shape)
         print(len(patches))
