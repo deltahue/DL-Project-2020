@@ -146,10 +146,13 @@ class CUTModel(BaseModel):
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
         self.real =  self.real_A
-
+        if self.opt.flip_equivariance:
+            self.flipped_for_equivariance = self.opt.isTrain and (np.random.random() < 0.5)
+            if self.flipped_for_equivariance:
+                self.real = torch.flip(self.real, [3])
 
         self.fake = self.netG(self.real)
-        self.fake_B = self.fake[:self.real_A.size(0)]
+        self.fake_B = self.fake[0]
         if self.opt.nce_idt:
             self.idt_B = self.fake[self.real_A.size(0):]
 
