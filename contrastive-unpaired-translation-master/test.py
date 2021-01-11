@@ -1,3 +1,9 @@
+
+
+
+
+
+
 """General-purpose test script for image-to-image translation.
 
 Once you have trained your model with train.py, you can use this script to test the model.
@@ -33,6 +39,11 @@ from models import create_model
 from util.visualizer import save_images
 from util import html
 import util.util as util
+import torch
+import util.patchify as patchify
+
+from pytorch_lightning import metrics
+import pytorch_fid
 
 
 if __name__ == '__main__':
@@ -44,13 +55,19 @@ if __name__ == '__main__':
     opt.no_flip = True    # no flip; comment this line if results on flipped images are needed.
     opt.display_id = -1   # no visdom display; the test code saves the results to a HTML file.
     dataset = create_dataset(opt)  # create a dataset given opt.dataset_mode and other options
-    train_dataset = create_dataset(util.copyconf(opt, phase="train"))
+    # train_dataset = create_dataset(util.copyconf(opt, phase="train"))
     model = create_model(opt)      # create a model given opt.model and other options
     # create a webpage for viewing the results
     web_dir = os.path.join(opt.results_dir, opt.name, '{}_{}'.format(opt.phase, opt.epoch))  # define the website directory
     print('creating web directory', web_dir)
     webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.epoch))
 
+    # prepare metrics
+    fake_key = 'fake_' + opt.direction[-1]
+    real_key = 'real_' + opt.direction[-1]
+
+    metricMAE = metrics.MeanAbsoluteError().to(torch.device('cuda:{}'.format(opt.gpu_ids[0])) if opt.gpu_ids else torch.device('cpu'))
+    metricMSE = metrics.MeanSquaredError().to(torch.device('cuda:{}'.format(opt.gpu_ids[0])) if opt.gpu_ids else torch.device('cpu'))
     for i, data in enumerate(dataset):
         if i == 0:
             model.data_dependent_initialize(data)
@@ -60,11 +77,56 @@ if __name__ == '__main__':
                 model.eval()
         if i >= opt.num_test:  # only apply our model to opt.num_test images.
             break
-        model.set_input(data)  # unpack data from data loader
-        model.test()           # run inference
-        visuals = model.get_current_visuals()  # get image results
+
+        print(data.keys())
+        print(data['A'].numpy().shape)
+        print(data['A'].shape)
+
+
+
+        real_A = data['A']
+        real_B = data['B']
+        print('input', real_A.numpy())
+
+        patches = patchify.patchify(real_A.numpy(), 4, 256)
+        for p in range(len(patches)):
+            patch = patches[p]
+            data['A'] = torch.tensor(patch.patch).type(torch.cuda.FloatTensor)
+            model.set_input(data)  # unpack data from data loader
+            model.test()           # run inference
+            fake_B = model.get_current_visuals()['fake_B']
+            patch.patch = fake_B.cpu().numpy()  # get image results
+            print('output', p, patch.patch)
+
+        prediction = patchify.unpatchify(patches, 8, 500)
+
+
+        visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction), 'real_B': real_B}
+
         img_path = model.get_image_paths()     # get image paths
+        print('prediction', visuals[fake_key])
+        # apply metrics
+        metricMAE(visuals[fake_key], visuals[real_key])
+        metricMSE(visuals[fake_key], visuals[real_key])
+
+
         if i % 5 == 0:  # save images to an HTML file
             print('processing (%04d)-th image... %s' % (i, img_path))
         save_images(webpage, visuals, img_path, width=opt.display_winsize)
     webpage.save()  # save the HTML
+
+    # compute metrics
+    mae = metricMAE.compute()
+    mse = metricMSE.compute()
+
+    print('MAE: ', mae)
+    print('MSE: ', mse)
+
+    fid_paths =  [os.path.join(web_dir, 'images', fake_key), os.path.join(web_dir, 'images', real_key)]
+    # fid_value = fid_score.calculate_fid_given_paths(fid_paths,
+    #                                                 batch_size=50,
+    #                                                 device=None,
+    #                                                 dims=2048)
+    # print('FID: ', fid_value)
+
+
