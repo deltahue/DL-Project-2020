@@ -115,8 +115,8 @@ if __name__ == '__main__':
 
         if i % 5 == 0:  # save images to an HTML file
             print('processing (%04d)-th image... %s' % (i, img_path))
-        save_images(webpage, visuals, img_path, width=opt.display_winsize)
-    webpage.save()  # save the HTML
+        # save_images(webpage, visuals, img_path, width=opt.display_winsize)
+    # webpage.save()  # save the HTML
 
     # compute metrics
     mae = metricMAE.compute()
