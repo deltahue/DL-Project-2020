@@ -58,9 +58,9 @@ if __name__ == '__main__':
     # train_dataset = create_dataset(util.copyconf(opt, phase="train"))
     model = create_model(opt)      # create a model given opt.model and other options
     # create a webpage for viewing the results
-    web_dir = os.path.join(opt.results_dir, opt.name, '{}_{}'.format(opt.phase, opt.epoch))  # define the website directory
-    print('creating web directory', web_dir)
-    webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.epoch))
+    # web_dir = os.path.join(opt.results_dir, opt.name, '{}_{}'.format(opt.phase, opt.epoch))  # define the website directory
+    # print('creating web directory', web_dir)
+    # webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.epoch))
 
     # prepare metrics
     fake_key = 'fake_' + opt.direction[-1]
@@ -69,12 +69,12 @@ if __name__ == '__main__':
     metricMAE = metrics.MeanAbsoluteError().to(torch.device('cuda:{}'.format(opt.gpu_ids[0])) if opt.gpu_ids else torch.device('cpu'))
     metricMSE = metrics.MeanSquaredError().to(torch.device('cuda:{}'.format(opt.gpu_ids[0])) if opt.gpu_ids else torch.device('cpu'))
     for i, data in enumerate(dataset):
-        if i == 0:
-            model.data_dependent_initialize(data)
-            model.setup(opt)               # regular setup: load and print networks; create schedulers
-            model.parallelize()
-            if opt.eval:
-                model.eval()
+        # if i == 0:
+        #     model.data_dependent_initialize(data)
+        #     model.setup(opt)               # regular setup: load and print networks; create schedulers
+        #     model.parallelize()
+        #     if opt.eval:
+        #         model.eval()
         if i >= opt.num_test:  # only apply our model to opt.num_test images.
             break
 
@@ -88,7 +88,7 @@ if __name__ == '__main__':
         real_B = data['B']
         print('input', real_A.numpy())
 
-        patches = patchify.patchify(real_A.numpy(), 1, 256)
+        patches = patchify.patchify(real_A.numpy(), 2, 256)
         for p in range(len(patches)):
             patch = patches[p]
             data['A'] = torch.tensor(patch.patch).type(torch.cuda.FloatTensor)
