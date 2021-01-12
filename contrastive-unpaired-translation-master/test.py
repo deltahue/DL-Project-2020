@@ -100,7 +100,7 @@ if __name__ == '__main__':
                 data['A'] = torch.tensor(patch.patch).type(torch.FloatTensor)
                 model.set_input(data)  # unpack data from data loader
                 model.test()           # run inference
-                fake_B = model.fake_B.clone().detach()
+                fake_B = model.fake_A.clone().detach()
                 patch.patch = fake_B.cpu().numpy()  # get image results
                 print(patch.patch.shape)
             print(len(patches))
