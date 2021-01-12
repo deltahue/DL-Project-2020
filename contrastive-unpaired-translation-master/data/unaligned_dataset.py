@@ -169,7 +169,13 @@ class UnalignedDataset(BaseDataset):
             A = transform(A_crop)
             B = transform(B_crop)
         else:
-            transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
+            # transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
+            is_finetuning = self.opt.isTrain and self.current_epoch > self.opt.n_epochs
+
+            modified_opt = util.copyconf(self.opt, load_size=self.opt.crop_size if is_finetuning else self.opt.load_size)
+
+            transform = get_transform(modified_opt)
+
             A = transform(A_img)
             B = transform(A_img)
         # A = torch.unsqueeze(A, dim = 3)
