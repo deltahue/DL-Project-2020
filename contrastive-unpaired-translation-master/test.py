@@ -86,13 +86,18 @@ if __name__ == '__main__':
 
         real_A = data['A']
         real_B = data['B']
+        real_A_np = real_A.numpy()
         print('input', real_A.numpy())
-
+        model.set_input(data)  # unpack datap from data loader
+        model.real_A = torch.tensor(real_A_np[:256,:256]).type(torch.cuda.FloatTensor)
+        model.test()
+        prediction = model.fake_B.cpu().numpy() 
+        '''
         patches = patchify.patchify(real_A.numpy(), 2, 256)
         for p in range(len(patches)):
             patch = patches[p]
             data['A'] = torch.tensor(patch.patch).type(torch.cuda.FloatTensor)
-            model.set_input(data)  # unpack data from data loader
+            model.set_input(data)  # unpack datap from data loader
             model.real_A = torch.tensor(patch.patch).type(torch.cuda.FloatTensor)
             model.test()           # run inference
             time.sleep(.5)
@@ -102,7 +107,7 @@ if __name__ == '__main__':
             print(patch.patch.shape)
         print(len(patches))
         prediction = patchify.unpatchify(patches, 8, 500)
-
+        '''
 
         visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction), 'real_B': real_B}
 
@@ -115,8 +120,8 @@ if __name__ == '__main__':
 
         if i % 5 == 0:  # save images to an HTML file
             print('processing (%04d)-th image... %s' % (i, img_path))
-        save_images(webpage, visuals, img_path, width=opt.display_winsize)
-    webpage.save()  # save the HTML
+        save_images(webpage, visuals, , width=opt.display_winsize)
+    webpage.save()  # save the HTMLimg_path
 
     # compute metrics
     mae = metricMAE.compute()
