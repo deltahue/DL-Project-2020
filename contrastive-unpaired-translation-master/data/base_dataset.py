@@ -81,6 +81,8 @@ def get_params(opt, size):
 
 
 def get_transform(opt, params=None, grayscale=True, data_augmentation = True, method=Image.BICUBIC, convert=True):
+    print('transforming')
+
     transform_list = []
     if data_augmentation:
         transform_list.append(transforms.RandomAffine(5.,scale = [0.9,1.1],shear=[0.97,1.03]))
@@ -90,6 +92,7 @@ def get_transform(opt, params=None, grayscale=True, data_augmentation = True, me
     if 'fixsize' in opt.preprocess:
         transform_list.append(transforms.Resize(params["size"], method))
     if 'resize' in opt.preprocess:
+        print('resizzzzzzing')
         osize = [opt.load_size, opt.load_size]
         if "gta2cityscapes" in opt.dataroot:
             osize[0] = opt.load_size // 2
