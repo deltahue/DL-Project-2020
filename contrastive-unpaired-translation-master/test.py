@@ -108,6 +108,7 @@ if __name__ == '__main__':
             prediction = patchify.unpatchify(patches, 0, 256)
             print('Input min', np.amin(prediction))
             print('Input max', np.amax(prediction))
+            print(prediction.shape)
 
             visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction), 'real_B': real_B}
 
