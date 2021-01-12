@@ -103,7 +103,6 @@ if __name__ == '__main__':
                 fake_B = model.fake_A.clone().detach()
                 patch.patch = fake_B.cpu().numpy()  # get image results
                 print(patch.patch.shape)
-            print(len(patches))
 
 
             prediction = patchify.unpatchify(patches, 8, 256)
@@ -117,8 +116,6 @@ if __name__ == '__main__':
             # apply metrics
             metricMAE(visuals[fake_key], visuals[real_key])
             metricMSE(visuals[fake_key], visuals[real_key])
-
-
 
         if i % 5 == 0:  # save images to an HTML file
             print('processing (%04d)-th image... %s' % (i, img_path))
