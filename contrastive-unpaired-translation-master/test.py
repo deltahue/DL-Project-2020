@@ -119,6 +119,7 @@ if __name__ == '__main__':
             metricMSE(visuals[fake_key], visuals[real_key])
 
 
+
         if i % 5 == 0:  # save images to an HTML file
             print('processing (%04d)-th image... %s' % (i, img_path))
         save_images(webpage, visuals, img_path, width=opt.display_winsize)
