@@ -8,6 +8,7 @@ import torch.utils.data as data
 from PIL import Image
 import torchvision.transforms as transforms
 from abc import ABC, abstractmethod
+from torchio import RandomElasticDeformation
 
 
 class BaseDataset(data.Dataset, ABC):
@@ -79,12 +80,11 @@ def get_params(opt, size):
     return {'crop_pos': (x, y), 'flip': flip}
 
 
-def get_transform(opt, params=None, grayscale=False, data_augmentation = True, method=Image.BICUBIC, convert=True):
+def get_transform(opt, params=None, grayscale=True, data_augmentation = True, method=Image.BICUBIC, convert=True):
     transform_list = []
-    if data_augmentation:
-        transform_list.append(transforms.RandAffine(15., translate=0.15, shear=[2.,2.]))
-    if grayscale:
-        transform_list.append(transforms.Grayscale(1))
+        # transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base=4, method=method)))
+    # if grayscale:
+    #     transform_list.append(transforms.Grayscale(1))
     if 'fixsize' in opt.preprocess:
         transform_list.append(transforms.Resize(params["size"], method))
     if 'resize' in opt.preprocess:
@@ -116,8 +116,9 @@ def get_transform(opt, params=None, grayscale=False, data_augmentation = True, m
         transform_list.append(transforms.Lambda(lambda img: __trim(img, opt.crop_size)))
 
     # if opt.preprocess == 'none':
-    transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base=4, method=method)))
-
+    # transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base=4, method=method)))
+    if data_augmentation:
+        transform_list.append(transforms.RandomAffine(2.,scale = [0.9,1.1]))
     if not opt.no_flip:
         if params is None or 'flip' not in params:
             transform_list.append(transforms.RandomHorizontalFlip())
@@ -126,10 +127,10 @@ def get_transform(opt, params=None, grayscale=False, data_augmentation = True, m
 
     if convert:
         transform_list += [transforms.ToTensor()]
-        if grayscale:
-            transform_list += [transforms.Normalize((0.5,), (0.5,))]
-        else:
-            transform_list += [transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+        # if grayscale:
+        #     transform_list += [transforms.Normalize((0.5,), (0.5,))]
+        # else:
+        #     transform_list += [transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
     return transforms.Compose(transform_list)
 
 
