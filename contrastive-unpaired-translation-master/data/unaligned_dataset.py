@@ -201,13 +201,7 @@ class UnalignedDataset(BaseDataset):
             # print("B: max {}, min {}".format(np.amax(np_b),np.amin(np_b)))
             if np.amax(np_b) < 0:
                 print(B_path)
-        else:
-            # transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
-            is_finetuning = self.opt.isTrain and self.current_epoch > self.opt.n_epochs
-            modified_opt = util.copyconf(self.opt, load_size=self.opt.crop_size if is_finetuning else self.opt.load_size)
-
-            transform = get_transform(modified_opt)
-
+     
         else:
             transform = transforms.Compose([transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base=4, method=method))), transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
             A = transform(A_img)
