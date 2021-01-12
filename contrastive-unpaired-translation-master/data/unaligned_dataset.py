@@ -69,14 +69,16 @@ class UnalignedDataset(BaseDataset):
             slice_number = int(slicenii[:3])
         B_path = '/path/to/B'
         # print(slice_number)
+
+
         slice_number_orig = slice_number
         r = 5
         if slice_number <= 10:
-            slice_number += random.randint(0, 10)
+            slice_number += random.randint(0, 5)
         elif slice_number >= 290:
-            slice_number += random.randint(-10,0)
+            slice_number += random.randint(-5,0)
         else:
-            slice_number += random.randint(-10, 10)
+            slice_number += random.randint(-5, 5)
         for i in range(150):
             if not os.path.exists(B_path):
                 # print(slice_number)
@@ -88,7 +90,10 @@ class UnalignedDataset(BaseDataset):
                 # print("empty")
                 slice_number = int(slice_number)
                 # print(slice_number)
-                slice_number += -1
+                if slice_number < 61:
+                    slice_number += 1
+                elif slice_number > 260:
+                    slice_number += -1
             else:
                 B_path = B_paths[0]
                 try:
@@ -99,14 +104,20 @@ class UnalignedDataset(BaseDataset):
                         B_path = '/path/to/B'
                         slice_number = int(slice_number)
                         # print(slice_number)
-                        slice_number += -1
+                        if slice_number < 61:
+                            slice_number += 1
+                        elif slice_number > 260:
+                            slice_number += -1
                     else:
                         break
                     # slice_number = slice_number_orig
                 except:
                     slice_number = int(slice_number)
                     # print(slice_number)
-                    slice_number += -1
+                    if slice_number < 61:
+                        slice_number += 1
+                    elif slice_number > 260:
+                        slice_number += -1
                     pass
 
             # r += 1
@@ -129,19 +140,30 @@ class UnalignedDataset(BaseDataset):
         A_img_numpy[A_img_numpy > 1.] = 1.
         A_img_numpy[A_img_numpy < 0.] = 0.
         A_img_numpy = 255*A_img_numpy
+        A_nonzero = np.count_nonzero(A_img_numpy)
         A_img_numpy = A_img_numpy.astype(np.uint8)
         A_img = Image.fromarray(A_img_numpy)
 
         if self.opt.isTrain:
-            # Random crop
-            i, j, h, w = transforms.RandomCrop.get_params(A_img, output_size=(self.opt.crop_size,self.opt.crop_size))
-            A_crop = TF.crop(A_img, i, j, h, w)
-            for i in range(50):
-                if not A_crop.getbbox():
-                    i, j, h, w = transforms.RandomCrop.get_params(A_img, output_size=(self.opt.crop_size, self.opt.crop_size))
-                    A_crop = TF.crop(A_img, i, j, h, w)
-                else:
-                    break
+
+            if self.opt.crop_size == 256:
+                # Random crop
+                i, j, h, w = transforms.RandomCrop.get_params(A_img, output_size=(self.opt.crop_size,self.opt.crop_size))
+                A_crop = TF.crop(A_img, i, j, h, w)
+                for i in range(50):
+                    if not A_crop.getbbox():
+                        i, j, h, w = transforms.RandomCrop.get_params(A_img, output_size=(self.opt.crop_size, self.opt.crop_size))
+                        A_crop = TF.crop(A_img, i, j, h, w)
+                    else:
+                        break
+                np_im = np.array(A_crop)
+                for i in range(100):
+                    if np.count_nonzero(np_im) < round(A_nonzero // 3):
+                        i, j, h, w = transforms.RandomCrop.get_params(A_img, output_size=(self.opt.crop_size, self.opt.crop_size))
+                        A_crop = TF.crop(A_img, i, j, h, w)
+                        np_im = np.array(A_crop)
+            else:
+                A_crop = A_img
         #B_img = Image.open(B_path).convert('RGB')
         # B_img_nifti = nib.load(B_path)
         # B_img_numpy = B_img_nifti.get_fdata(caching = "unchanged")
@@ -154,11 +176,16 @@ class UnalignedDataset(BaseDataset):
         B_img_numpy = (B_img_numpy + 1024.)/4095. #Normalize CT to be in range [0, 255]   
         B_img_numpy[B_img_numpy > 1.] = 1.
         B_img_numpy[B_img_numpy < 0.] = 0.
+        if np.amax(B_img_numpy) == 0:
+            print(B_path)
         B_img_numpy = 255*B_img_numpy
         B_img_numpy = B_img_numpy.astype(np.uint8)
         B_img = Image.fromarray(B_img_numpy)
         if self.opt.isTrain:
-            B_crop = TF.crop(B_img, i, j, h, w)
+            if self.opt.crop_size == 256:
+                B_crop = TF.crop(B_img, i, j, h, w)
+            else:
+                B_crop = B_img
         # Apply image transformation
         # For FastCUT mode, if in finetuning phase (learning rate is decaying),
         # do not perform resize-crop data augmentation of CycleGAN.
@@ -167,15 +194,16 @@ class UnalignedDataset(BaseDataset):
             modified_opt = util.copyconf(self.opt, load_size=self.opt.crop_size if is_finetuning else self.opt.load_size)
             transform = get_transform(modified_opt)
             A = transform(A_crop)
+            np_a = np.array(A)
+            # print("A: max {}, min {}".format(np.amax(np_a),np.amin(np_a)))
             B = transform(B_crop)
+            np_b = np.array(B)
+            # print("B: max {}, min {}".format(np.amax(np_b),np.amin(np_b)))
+            if np.amax(np_b) < 0:
+                print(B_path)
+
         else:
-            # transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
-            is_finetuning = self.opt.isTrain and self.current_epoch > self.opt.n_epochs
-
-            modified_opt = util.copyconf(self.opt, load_size=self.opt.crop_size if is_finetuning else self.opt.load_size)
-
-            transform = get_transform(modified_opt)
-
+            transform = transforms.Compose([transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base=4, method=method))), transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
             A = transform(A_img)
             B = transform(A_img)
         # A = torch.unsqueeze(A, dim = 3)

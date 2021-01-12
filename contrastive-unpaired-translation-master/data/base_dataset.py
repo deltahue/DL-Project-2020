@@ -81,18 +81,13 @@ def get_params(opt, size):
 
 
 def get_transform(opt, params=None, grayscale=True, data_augmentation = True, method=Image.BICUBIC, convert=True):
-    print('transforming')
-
     transform_list = []
-    if data_augmentation:
-        transform_list.append(transforms.RandomAffine(5.,scale = [0.9,1.1],shear=[0.97,1.03]))
         # transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base=4, method=method)))
     # if grayscale:
     #     transform_list.append(transforms.Grayscale(1))
     if 'fixsize' in opt.preprocess:
         transform_list.append(transforms.Resize(params["size"], method))
     if 'resize' in opt.preprocess:
-        print('resizzzzzzing')
         osize = [opt.load_size, opt.load_size]
         if "gta2cityscapes" in opt.dataroot:
             osize[0] = opt.load_size // 2
@@ -121,8 +116,9 @@ def get_transform(opt, params=None, grayscale=True, data_augmentation = True, me
         transform_list.append(transforms.Lambda(lambda img: __trim(img, opt.crop_size)))
 
     # if opt.preprocess == 'none':
-    transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base=4, method=method)))
-
+    # transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base=4, method=method)))
+    if data_augmentation:
+        transform_list.append(transforms.RandomAffine(2.,scale = [0.9,1.1]))
     if not opt.no_flip:
         if params is None or 'flip' not in params:
             transform_list.append(transforms.RandomHorizontalFlip())
@@ -131,8 +127,8 @@ def get_transform(opt, params=None, grayscale=True, data_augmentation = True, me
 
     if convert:
         transform_list += [transforms.ToTensor()]
-        if grayscale:
-            transform_list += [transforms.Normalize((0.5,), (0.5,))]
+        # if grayscale:
+        #     transform_list += [transforms.Normalize((0.5,), (0.5,))]
         # else:
         #     transform_list += [transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
     return transforms.Compose(transform_list)
