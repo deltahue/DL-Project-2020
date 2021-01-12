@@ -88,6 +88,9 @@ if __name__ == '__main__':
             real_B = data['B']
             print(data.keys())
 
+            print('Input min', np.amin(real_A.numpy()))
+            print('Input max', np.amax(real_A.numpy()))
+
             patches = patchify.patchify(real_A.numpy(), 2, 256)
             for p in range(len(patches)):
 
@@ -101,8 +104,11 @@ if __name__ == '__main__':
                 patch.patch = fake_B.cpu().numpy()  # get image results
                 print(patch.patch.shape)
             print(len(patches))
-            prediction = patchify.unpatchify(patches, 8, 500)
 
+
+            prediction = patchify.unpatchify(patches, 8, 500)
+            print('Input min', np.amin(prediction))
+            print('Input max', np.amax(prediction))
 
             visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction), 'real_B': real_B}
 
