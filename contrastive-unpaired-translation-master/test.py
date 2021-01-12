@@ -102,7 +102,7 @@ if __name__ == '__main__':
                 model.set_input(data)  # unpack data from data loader
                 model.test()           # run inference
                 fake_B = model.fake_B.clone().detach()
-                patch.patch = fake_B.cpu().numpy()  # get image results
+                patch.patch = (fake_B.cpu().numpy()-0.5)/0.5  # get image results
                 print(patch.patch.shape)
 
 
