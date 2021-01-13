@@ -39,7 +39,9 @@ def patchify(img, n, patch_size):
     for i in range(n):
         for j in range(n):
             patch = Patch(img, i, j, n, patch_size)  # Create patch
-            patches.append(patch)  # Add patch to list
+            C = np.count_nonzero(patch.patch)
+            if C > patch_size**2/2:
+                patches.append(patch)  # Add patch to list
     return patches
 
 
