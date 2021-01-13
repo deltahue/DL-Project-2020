@@ -53,7 +53,7 @@ def unpatchify(patches, crop, s):
         print(patch.patch.shape)
 
         l, r, t, b = patch.left + crop // 4, patch.right - crop // 4, patch.top + crop // 4, patch.bottom - crop // 4
-        img_reconstructed[:, :, t + 500:b + 500, l + 500:r + 500] += patch.patch
+        img_reconstructed[:, :, t + 500:b + 500, l + 500:r + 500] += patch.patch[:,:,crop//4:-crop//4,crop//4:-crop//4]
         img_reconstructed_count[:, :, t + 500:b + 500, l + 500:r + 500] += 1
 
     return img_reconstructed[:, :, 500:500 + s, 500:500 + s] /img_reconstructed_count[:, :, 500:500 + s, 500:500 + s]
