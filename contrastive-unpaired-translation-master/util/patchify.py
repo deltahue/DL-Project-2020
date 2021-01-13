@@ -36,8 +36,8 @@ class Patch:
 def patchify(img, n, patch_size):
     patches = []  # List containing all patches from initial_img
     # Iterate over a nxn grid
-    for i in range(5,n-5):
-        for j in range(5,n-5):
+    for i in range(6,n-6):
+        for j in range(6,n-6):
             patch = Patch(img, i, j, n, patch_size)  # Create patch
             patches.append(patch)  # Add patch to list
     return patches
