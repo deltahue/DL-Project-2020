@@ -82,7 +82,7 @@ if __name__ == '__main__':
         # if i >= opt.num_test:  # only apply our model to opt.num_test images.
             # break
 
-
+        if i%30 == 0:
 
             real_A = data['A']
             real_B = data['B']
@@ -92,7 +92,7 @@ if __name__ == '__main__':
             print('Input max', np.amax(real_A.numpy()))
             print('Input max', real_A.numpy().shape)
 
-            patches = patchify.patchify(real_A.numpy(), 16, 256)
+            patches = patchify.patchify(real_A.numpy(), 8, 256)
             for p in range(len(patches)):
 
                 patch = patches[p]
@@ -106,7 +106,7 @@ if __name__ == '__main__':
                 print(patch.patch.shape)
 
 
-            prediction = patchify.unpatchify(patches, 4, 512)
+            prediction = patchify.unpatchify(patches, 32, 512)
             print('Input min', np.amin(prediction))
             print('Input max', np.amax(prediction))
             print(prediction.shape)
