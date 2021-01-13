@@ -56,6 +56,6 @@ def unpatchify(patches, crop, s):
         # img_reconstructed[:, :, t + 500:b + 500, l + 500:r + 500, p] = patch.patch[:,:,crop//4:-crop//4,crop//4:-crop//4]
 
     print('normal',img_reconstructed.shape)
-    print('mean',np.mean(img_reconstructed[:, :, 500:500 + s, 500:500 + s], axis=(4)))
+    print('mean',np.mean(img_reconstructed[:, :, 500:500 + s, 500:500 + s], axis=(4)).shape)
     return np.mean(img_reconstructed[:, :, 500:500 + s, 500:500 + s], axis=(4))
 
