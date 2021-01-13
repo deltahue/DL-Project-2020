@@ -36,14 +36,10 @@ class Patch:
 def patchify(img, n, patch_size):
     patches = []  # List containing all patches from initial_img
     # Iterate over a nxn grid
-    for i in range(n):
-        for j in range(n):
+    for i in range(2,n-2):
+        for j in range(2,n-2):
             patch = Patch(img, i, j, n, patch_size)  # Create patch
-            C = np.count_nonzero(patch.patch)
-            if C > patch_size**2/3:
-                print(C, patch_size ** 2 / 3)
-
-                patches.append(patch)  # Add patch to list
+            patches.append(patch)  # Add patch to list
     return patches
 
 
