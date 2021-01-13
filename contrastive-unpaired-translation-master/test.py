@@ -92,7 +92,7 @@ if __name__ == '__main__':
             print('Input max', np.amax(real_A.numpy()))
             print('Input max', real_A.numpy().shape)
 
-            patches = patchify.patchify(real_A.numpy(), 1, 256)
+            patches = patchify.patchify(real_A.numpy(), 4, 256)
             for p in range(len(patches)):
 
                 patch = patches[p]
@@ -106,7 +106,7 @@ if __name__ == '__main__':
                 print(patch.patch.shape)
 
 
-            prediction = patchify.unpatchify(patches, 0, 256)
+            prediction = patchify.unpatchify(patches, 0, 500)
             print('Input min', np.amin(prediction))
             print('Input max', np.amax(prediction))
             print(prediction.shape)
