@@ -106,7 +106,7 @@ if __name__ == '__main__':
                 print(patch.patch.shape)
 
 
-            prediction = patchify.unpatchify(patches, 32, 500)
+            prediction = patchify.unpatchify(patches, 32*4, 500)
             print('Input min', np.amin(prediction))
             print('Input max', np.amax(prediction))
             print(prediction.shape)
