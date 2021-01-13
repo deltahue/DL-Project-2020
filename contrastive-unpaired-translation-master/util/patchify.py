@@ -58,5 +58,5 @@ def unpatchify(patches, crop, s):
     print('normal',img_reconstructed.shape)
     print('mean',np.nanmedian(img_reconstructed[:, :, 500:500 + s, 500:500 + s, :], axis=(4)).shape)
     matrix = img_reconstructed[:, :, 500:500 + s, 500:500 + s,:]
-    return np.ma.mean(np.where(matrix!=0,matrix,np.nan), axis=(4))
+    return np.mean(np.where(matrix!=0,matrix,np.nan), axis=(4))
 
