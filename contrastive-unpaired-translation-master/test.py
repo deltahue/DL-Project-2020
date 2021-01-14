@@ -84,49 +84,48 @@ if __name__ == '__main__':
         # if i >= opt.num_test:  # only apply our model to opt.num_test images.
             # break
 
-        if i%30 == 0:
 
-            real_A = data['A']
-            real_B = data['B']
-            print(data.keys())
+        real_A = data['A']
+        real_B = data['B']
+        print(data.keys())
 
-            print('Input min', np.amin(real_A.numpy()))
-            print('Input max', np.amax(real_A.numpy()))
-            print('Input max', real_A.numpy().shape)
+        print('Input min', np.amin(real_A.numpy()))
+        print('Input max', np.amax(real_A.numpy()))
+        print('Input max', real_A.numpy().shape)
 
-            patches = patchify.patchify(real_A.numpy(), 1, 256)
-            for p in range(len(patches)):
+        patches = patchify.patchify(real_A.numpy(), 1, 256)
+        for p in range(len(patches)):
 
-                patch = patches[p]
+            patch = patches[p]
 
-                # transposed = np.transpose(patch.patch, axes=(0,1,3,2))
-                data['A'] = torch.tensor(patch.patch).type(torch.FloatTensor)
-                model.set_input(data)  # unpack data from data loader
-                model.test()           # run inference
-                fake_B = model.fake_B.clone().detach()
-                patch.patch = fake_B.cpu().numpy() # get image results
-                print(patch.patch.shape)
-
-
-            prediction = patchify.unpatchify(patches, 0, 256)
-            prediction = (prediction-0.5)/0.5
-            print(prediction)
-            # prediction = np.array(scipy.ndimage.zoom(prediction, (1, 1, 2, 2), order=1),dtype=np.float)
-            print('Input min', np.amin(prediction))
-            print('Input max', np.amax(prediction))
-            print(prediction.shape)
+            # transposed = np.transpose(patch.patch, axes=(0,1,3,2))
+            data['A'] = torch.tensor(patch.patch).type(torch.FloatTensor)
+            model.set_input(data)  # unpack data from data loader
+            model.test()           # run inference
+            fake_B = model.fake_B.clone().detach()
+            patch.patch = fake_B.cpu().numpy() # get image results
+            print(patch.patch.shape)
 
 
-            # real_A = np.array(scipy.ndimage.zoom(real_A, (1, 1, 2, 2), order=1), dtype=np.float)
-            # real_B = np.array(scipy.ndimage.zoom(real_B, (1, 1, 2, 2), order=1),dtype=np.float)
-            visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction), 'real_B': real_B}
+        prediction = patchify.unpatchify(patches, 0, 256)
+        prediction = (prediction-0.5)/0.5
+        print(prediction)
+        # prediction = np.array(scipy.ndimage.zoom(prediction, (1, 1, 2, 2), order=1),dtype=np.float)
+        print('Input min', np.amin(prediction))
+        print('Input max', np.amax(prediction))
+        print(prediction.shape)
 
-            img_path = model.get_image_paths()     # get image paths
-            print('prediction', visuals[fake_key])
-            # apply metrics
-            print(visuals[fake_key].shape, visuals[real_key].shape)
-            # metricMAE(visuals[fake_key], visuals[real_key])
-            # metricMSE(visuals[fake_key], visuals[real_key])
+
+        # real_A = np.array(scipy.ndimage.zoom(real_A, (1, 1, 2, 2), order=1), dtype=np.float)
+        # real_B = np.array(scipy.ndimage.zoom(real_B, (1, 1, 2, 2), order=1),dtype=np.float)
+        visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction), 'real_B': real_B}
+
+        img_path = model.get_image_paths()     # get image paths
+        print('prediction', visuals[fake_key])
+        # apply metrics
+        print(visuals[fake_key].shape, visuals[real_key].shape)
+        # metricMAE(visuals[fake_key], visuals[real_key])
+        # metricMSE(visuals[fake_key], visuals[real_key])
 
         if i % 5 == 0:  # save images to an HTML file
             print('processing (%04d)-th image... %s' % (i, img_path))
