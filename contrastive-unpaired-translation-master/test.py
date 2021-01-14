@@ -115,6 +115,9 @@ if __name__ == '__main__':
             print('Input max', np.amax(prediction))
             print(prediction.shape)
 
+
+            real_A = scipy.ndimage.zoom(real_A, (1, 1, 2, 2), order=1)
+            real_B = scipy.ndimage.zoom(real_B, (1, 1, 2, 2), order=1)
             visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction), 'real_B': real_B}
 
             img_path = model.get_image_paths()     # get image paths
