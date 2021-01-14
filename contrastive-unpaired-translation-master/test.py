@@ -104,7 +104,6 @@ if __name__ == '__main__':
             model.test()           # run inference
             fake_B = model.fake_B.clone().detach()
             patch.patch = fake_B.cpu().numpy() # get image results
-            print(patch.patch.shape)
 
 
         prediction = patchify.unpatchify(patches, 0, 256)
@@ -115,16 +114,16 @@ if __name__ == '__main__':
         print('Input max', np.amax(prediction))
         print(prediction.shape)
 
+        real_A = (real_A-0.5)/0.5
+        real_B = (real_B-0.5)/0.5
 
         # real_A = np.array(scipy.ndimage.zoom(real_A, (1, 1, 2, 2), order=1), dtype=np.float)
         # real_B = np.array(scipy.ndimage.zoom(real_B, (1, 1, 2, 2), order=1),dtype=np.float)
         visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction), 'real_B': real_B}
 
         img_path = model.get_image_paths()     # get image paths
-        print(img_path)
-        print('prediction', visuals[fake_key])
+
         # apply metrics
-        print(visuals[fake_key].shape, visuals[real_key].shape)
         # metricMAE(visuals[fake_key], visuals[real_key])
         # metricMSE(visuals[fake_key], visuals[real_key])
 
