@@ -102,11 +102,12 @@ if __name__ == '__main__':
                 model.set_input(data)  # unpack data from data loader
                 model.test()           # run inference
                 fake_B = model.fake_B.clone().detach()
-                patch.patch = (fake_B.cpu().numpy()-0.5)/0.5  # get image results
+                patch.patch = fake_B.cpu().numpy() # get image results
                 print(patch.patch.shape)
 
 
-            prediction = patchify.unpatchify(patches, 4, 512)
+            prediction = patchify.unpatchify(patches, 0, 512)
+            prediction = (prediction-0.5)/0.5
             print('Input min', np.amin(prediction))
             print('Input max', np.amax(prediction))
             print(prediction.shape)

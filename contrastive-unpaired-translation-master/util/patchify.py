@@ -41,7 +41,7 @@ def patchify(img, n, patch_size):
                 patch = Patch(img, i, j, n, patch_size)  # Create patch
                 C = np.count_nonzero(patch.patch)
                 print(C, 256 * 256 / 4)
-                if (n//3 <= i < 2*n//3 and n//3+2 <= j < 2*n//3) :
+                if (n//3 <= i < 2*n//3 and n//3+2 <= j < 2*n//3) or (C > patch_size*patch_size/2) :
                     patches.append(patch)  # Add patch to list
     return patches
 
@@ -49,21 +49,19 @@ def patchify(img, n, patch_size):
 def unpatchify(patches, crop, s):
     # UNPATCHIFY
     img_reconstructed = np.zeros((1, 1, 500 + s + 500, 500 + s + 500, len(patches)))
-    # img_reconstructed_count = np.zeros((1, 1, 500 + s + 500, 500 + s + 500))
 
     for p in range(len(patches)):
         patch = patches[p]
         print(patch.patch.shape)
 
         l, r, t, b = patch.left + crop // 4, patch.right - crop // 4, patch.top + crop // 4, patch.bottom - crop // 4
-        img_reconstructed[:, :, t + 500:b + 500, l + 500:r + 500, p] = patch.patch[:,:,crop//4:-crop//4,crop//4:-crop//4]
+        img_reconstructed[:, :, t + 500:b + 500, l + 500:r + 500, p] = patch.patch
 
     print('normal',img_reconstructed.shape)
     print('mean',np.nanmedian(img_reconstructed[:, :, 500:500 + s, 500:500 + s, :], axis=(4)).shape)
-    matrix = img_reconstructed[:, :, 500:500 + s, 500:500 + s,:]
-    y = np.ma.masked_where(matrix == 0, matrix)
+    img_reconstructed_useful = img_reconstructed[:, :, 500:500 + s, 500:500 + s,:]
+    y = np.ma.masked_where(img_reconstructed_useful == 0, img_reconstructed_useful)
     res = np.ma.median(y, axis=4).filled(0)
-    res[res == 0] = -1
     return  res
 
 
