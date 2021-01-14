@@ -62,23 +62,23 @@ def unpatchify(patches, crop, s):
     y = np.ma.masked_where(img_reconstructed_useful == 0, img_reconstructed_useful)
     res = np.ma.median(y, axis=4).filled(0)
 
-    print(res.shape)
-    label_y = y.copy()
-    label_y[y < 0.2] = 1
-    label_y[y >= 0.2] = 2
-    label_y[y > 0.3] = 3
-    label_count = np.apply_along_axis(np.bincount, axis=4, arr=label_y,
-                                      minlength=np.max(label_y) + 1)
-    label_argmax = np.argmax(label_count, axis=-1)
-    average_y = res.copy()
-    for i in range(512):
-        for j in range(512):
-            array_patches = y[0,0,i,j,:]
-            label_y_patches = label_y[0,0,i,j,:]
-            label_count = np.apply_along_axis(np.bincount, axis=4, arr=array_patches,
-                                      minlength=np.max(array_patches) + 1)
-            label_argmax = np.argmax(label_count, axis=-1)
-            label_vote = label_argmax[0,0,i,j,0]
-            average_y[0,0,i,j] = np.mean(array_patches[label_y_patches == label_vote],axis = -1)
-    print(average_y.shape)
+    # print(res.shape)
+    # label_y = y.copy()
+    # label_y[y < 0.2] = 1
+    # label_y[y >= 0.2] = 2
+    # label_y[y > 0.3] = 3
+    # label_count = np.apply_along_axis(np.bincount, axis=4, arr=label_y,
+    #                                   minlength=np.max(label_y) + 1)
+    # label_argmax = np.argmax(label_count, axis=-1)
+    # average_y = res.copy()
+    # for i in range(512):
+    #     for j in range(512):
+    #         array_patches = y[0,0,i,j,:]
+    #         label_y_patches = label_y[0,0,i,j,:]
+    #         label_count = np.apply_along_axis(np.bincount, axis=4, arr=array_patches,
+    #                                   minlength=np.max(array_patches) + 1)
+    #         label_argmax = np.argmax(label_count, axis=-1)
+    #         label_vote = label_argmax[0,0,i,j,0]
+    #         average_y[0,0,i,j] = np.mean(array_patches[label_y_patches == label_vote],axis = -1)
+    # print(average_y.shape)
     return  res
