@@ -124,8 +124,8 @@ if __name__ == '__main__':
             print('prediction', visuals[fake_key])
             # apply metrics
             print(visuals[fake_key].shape, visuals[real_key].shape)
-            metricMAE(visuals[fake_key], visuals[real_key])
-            metricMSE(visuals[fake_key], visuals[real_key])
+            # metricMAE(visuals[fake_key], visuals[real_key])
+            # metricMSE(visuals[fake_key], visuals[real_key])
 
         if i % 5 == 0:  # save images to an HTML file
             print('processing (%04d)-th image... %s' % (i, img_path))
@@ -133,11 +133,11 @@ if __name__ == '__main__':
     webpage.save()  # save the HTML
 
     # compute metrics
-    mae = metricMAE.compute()
-    mse = metricMSE.compute()
+    # mae = metricMAE.compute()
+    # mse = metricMSE.compute()
 
-    print('MAE: ', mae)
-    print('MSE: ', mse)
+    # print('MAE: ', mae)
+    # print('MSE: ', mse)
 
     fid_paths =  [os.path.join(web_dir, 'images', fake_key), os.path.join(web_dir, 'images', real_key)]
     # fid_value = fid_score.calculate_fid_given_paths(fid_paths,
