@@ -110,14 +110,14 @@ if __name__ == '__main__':
 
             prediction = patchify.unpatchify(patches, 0, 256)
             prediction = (prediction-0.5)/0.5
-            prediction = scipy.ndimage.zoom(prediction, (1, 1, 2, 2), order=1)
+            prediction = np.array(scipy.ndimage.zoom(prediction, (1, 1, 2, 2), order=1))
             print('Input min', np.amin(prediction))
             print('Input max', np.amax(prediction))
             print(prediction.shape)
 
 
-            real_A = scipy.ndimage.zoom(real_A, (1, 1, 2, 2), order=1)
-            real_B = scipy.ndimage.zoom(real_B, (1, 1, 2, 2), order=1)
+            real_A = np.array(scipy.ndimage.zoom(real_A, (1, 1, 2, 2), order=1))
+            real_B = np.array(scipy.ndimage.zoom(real_B, (1, 1, 2, 2), order=1))
             visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction), 'real_B': real_B}
 
             img_path = model.get_image_paths()     # get image paths
