@@ -38,8 +38,11 @@ def patchify(img, n, patch_size):
     # Iterate over a nxn grid
     for i in range(n//3,2*n//3+1):
         for j in range(n//3,2*n//3+1):
-            patch = Patch(img, i, j, n, patch_size)  # Create patch
-            patches.append(patch)  # Add patch to list
+            C = np.count_nonzero(img)
+            print(C,256*256/4)
+            if (n//3 <= i < 2*n//3+1 and n//3 <= j < 2*n//3+1) or C > 256*256/4:
+                patch = Patch(img, i, j, n, patch_size)  # Create patch
+                patches.append(patch)  # Add patch to list
     return patches
 
 
