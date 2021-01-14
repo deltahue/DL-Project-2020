@@ -48,7 +48,7 @@ def patchify(img, n, patch_size):
 
 def unpatchify(patches, crop, s):
     # UNPATCHIFY
-    img_reconstructed = np.zeros((1, 1, 500 + s + 500, 500 + s + 500, len(patches)))
+    img_reconstructed = -np.ones((1, 1, 500 + s + 500, 500 + s + 500, len(patches)))
     # img_reconstructed_count = np.zeros((1, 1, 500 + s + 500, 500 + s + 500))
 
     for p in range(len(patches)):
@@ -62,5 +62,6 @@ def unpatchify(patches, crop, s):
     print('mean',np.nanmedian(img_reconstructed[:, :, 500:500 + s, 500:500 + s, :], axis=(4)).shape)
     matrix = img_reconstructed[:, :, 500:500 + s, 500:500 + s,:]
     y = np.ma.masked_where(matrix == 0, matrix)
+
     return np.ma.median(y, axis=4).filled(0)
 
