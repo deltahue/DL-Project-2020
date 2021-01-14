@@ -116,6 +116,8 @@ if __name__ == "__main__":
                                                      batch_size=50,
                                                      device=None,
                                                      dims=2048)
+        results['FID'] = fid_value
     with open(results_path, 'w') as file:
         documents = yaml.dump(results, file)
+    print(results)
 
