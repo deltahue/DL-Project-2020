@@ -110,6 +110,7 @@ if __name__ == '__main__':
 
             prediction = patchify.unpatchify(patches, 0, 256)
             prediction = (prediction-0.5)/0.5
+            print(prediction)
             prediction = np.array(scipy.ndimage.zoom(prediction, (1, 1, 2, 2), order=1))
             print('Input min', np.amin(prediction))
             print('Input max', np.amax(prediction))
