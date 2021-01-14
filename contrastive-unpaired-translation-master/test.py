@@ -121,6 +121,7 @@ if __name__ == '__main__':
         visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction), 'real_B': real_B}
 
         img_path = model.get_image_paths()     # get image paths
+        print(img_path)
         print('prediction', visuals[fake_key])
         # apply metrics
         print(visuals[fake_key].shape, visuals[real_key].shape)
