@@ -71,7 +71,7 @@ class UnalignedDataset(BaseDataset):
         # print(slice_number)
 
 
-        slice_number_orig = slice_number
+        # slice_number_orig = slice_number
         r = 5
         if slice_number <= 10:
             slice_number += random.randint(0, 5)
