@@ -100,10 +100,7 @@ def save_image(image_numpy, image_path, aspect_ratio=1.0):
     elif aspect_ratio < 1.0:
         image_pil = image_pil.resize((int(h / aspect_ratio), w), Image.BICUBIC)
 
-    if 'nii' in image_path:
-        nibabel.save(image_pil, image_path)
-    else:
-        image_pil.save(image_path)
+    image_pil.save(image_path)
 
 
 def print_numpy(x, val=True, shp=False):

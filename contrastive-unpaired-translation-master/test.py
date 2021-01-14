@@ -46,6 +46,7 @@ from pytorch_lightning import metrics
 import pytorch_fid
 import matplotlib.pyplot as plt
 import scipy.ndimage
+import nibabel
 
 
 import numpy as np
@@ -107,6 +108,8 @@ if __name__ == '__main__':
 
 
         prediction = patchify.unpatchify(patches, 0, 256)
+
+        nibabel.save(prediction, 'holahola.nii')
         prediction = (prediction-0.5)/0.5
         print(prediction)
         # prediction = np.array(scipy.ndimage.zoom(prediction, (1, 1, 2, 2), order=1),dtype=np.float)
