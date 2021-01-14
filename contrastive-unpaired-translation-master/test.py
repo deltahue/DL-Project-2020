@@ -109,7 +109,9 @@ if __name__ == '__main__':
 
         prediction = patchify.unpatchify(patches, 0, 256)
 
-        nibabel.save(prediction, 'holahola.nii')
+        new_CT = 4095*prediction - 1024
+        ni_image = nibabel.Nifil1Image(new_CT[0,0,:,:], np.eye(4))
+        nibabel.save(ni_image, 'filename.nii')
         prediction = (prediction-0.5)/0.5
         print(prediction)
         # prediction = np.array(scipy.ndimage.zoom(prediction, (1, 1, 2, 2), order=1),dtype=np.float)
