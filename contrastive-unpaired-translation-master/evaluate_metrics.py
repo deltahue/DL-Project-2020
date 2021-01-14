@@ -3,6 +3,7 @@ import cv2
 import nibabel as nib
 import os
 import yaml
+from pytorch_fid import fid_score
 #from pytorch_lightning import metrics
 
 import argparse
@@ -12,6 +13,7 @@ parser.add_argument('--bodymask_path',  type=str)
 parser.add_argument('--real_slices_path',  type=str)
 parser.add_argument('--fake_slices_path',  type=str)
 parser.add_argument('--results_path',  type=str, default='./metrics_result.yaml')
+parser.add_argument('--FID', type=bool, default=False)
 
 args = parser.parse_args()
 
@@ -107,7 +109,13 @@ if __name__ == "__main__":
         
         results[p] = {'mse': float(mse), 'mae': float(mae)}
 
-        #TODO save csv
+    if args.FID:
+        print('Calculating FID score, this may take a while...')
+        fid_paths =  [real_slices_path,fake_slices_path]
+        fid_value = fid_score.calculate_fid_given_paths(fid_paths,
+                                                     batch_size=50,
+                                                     device=None,
+                                                     dims=2048)
+    with open(results_path, 'w') as file:
+        documents = yaml.dump(results, file)
 
-with open(results_path, 'w') as file:
-    documents = yaml.dump(results, file)
