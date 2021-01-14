@@ -112,6 +112,7 @@ if __name__ == '__main__':
         prediction = patchify.unpatchify(patches, 0, 512)
 
         new_CT = 4095*prediction - 1024
+        new_CT = np.array(new_CT, dtype=np.int)
         ni_image = nibabel.Nifti1Image(new_CT[0,0,:,:], np.eye(4))
         os.makedirs('content/results', exist_ok=True)
         nibabel.save(ni_image, 'content/results/'+img_path[0].split('/')[-1])
