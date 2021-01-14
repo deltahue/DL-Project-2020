@@ -41,7 +41,7 @@ def patchify(img, n, patch_size):
                 patch = Patch(img, i, j, n, patch_size)  # Create patch
                 C = np.count_nonzero(patch.patch)
                 print(C, 256 * 256 / 4)
-                if (i==16 and j==16) or  C > 256*256/2:
+                if (n//3+4 <= i < 2*n//3-1 and n//3+2 <= j < 2*n//3-3) or  C > 256*256/2:
                     patches.append(patch)  # Add patch to list
     return patches
 
@@ -62,6 +62,8 @@ def unpatchify(patches, crop, s):
     print('mean',np.nanmedian(img_reconstructed[:, :, 500:500 + s, 500:500 + s, :], axis=(4)).shape)
     matrix = img_reconstructed[:, :, 500:500 + s, 500:500 + s,:]
     y = np.ma.masked_where(matrix == 0, matrix)
+    res = np.ma.median(y, axis=4).filled(0)
+    res[res == 0] = -1
+    return  res
 
-    return np.ma.median(y, axis=4).filled(0)
 
