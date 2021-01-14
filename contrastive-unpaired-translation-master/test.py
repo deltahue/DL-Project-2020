@@ -45,6 +45,8 @@ import time
 from pytorch_lightning import metrics
 import pytorch_fid
 import matplotlib.pyplot as plt
+import scipy.ndimage
+
 
 import numpy as np
 
@@ -108,6 +110,7 @@ if __name__ == '__main__':
 
             prediction = patchify.unpatchify(patches, 0, 256)
             prediction = (prediction-0.5)/0.5
+            prediction = scipy.ndimage.zoom(prediction, 2, order=1)
             print('Input min', np.amin(prediction))
             print('Input max', np.amax(prediction))
             print(prediction.shape)
