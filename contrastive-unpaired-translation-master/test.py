@@ -120,6 +120,7 @@ if __name__ == '__main__':
             img_path = model.get_image_paths()     # get image paths
             print('prediction', visuals[fake_key])
             # apply metrics
+            print(visuals[fake_key].shape, visuals[real_key].shape)
             metricMAE(visuals[fake_key], visuals[real_key])
             metricMSE(visuals[fake_key], visuals[real_key])
 
