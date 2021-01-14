@@ -209,7 +209,7 @@ class UnalignedDataset(BaseDataset):
                                          load_size=self.opt.crop_size if is_finetuning else self.opt.load_size)
             transform = get_transform(modified_opt)
             A = transform(A_img)
-            B = transform(A_img)
+            B = transform(B_img)
         # A = torch.unsqueeze(A, dim = 3)
         # B = torch.unsqueeze(B, dim = 3)
         # el_def = RandomElasticDeformation(num_control_points=6, locked_borders=2)
