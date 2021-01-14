@@ -110,7 +110,7 @@ if __name__ == '__main__':
         prediction = patchify.unpatchify(patches, 0, 256)
 
         new_CT = 4095*prediction - 1024
-        ni_image = nibabel.Niftil1Image(new_CT[0,0,:,:], np.eye(4))
+        ni_image = nibabel.Nifti1Image(new_CT[0,0,:,:], np.eye(4))
         nibabel.save(ni_image, 'filename.nii')
         prediction = (prediction-0.5)/0.5
         print(prediction)
