@@ -61,6 +61,7 @@ class UnalignedDataset(BaseDataset):
         A_path = self.A_paths[index % self.A_size]  # make sure index is within then range
         # print("A path {}".format(A_path))
         pat, mr_series, slicenii = os.path.basename(A_path).split("-")
+        print(slicenii)
         if len(slicenii) == 5:
             slice_number = int(slicenii[:1])
         elif len(slicenii) == 6:
@@ -71,7 +72,7 @@ class UnalignedDataset(BaseDataset):
         # print(slice_number)
 
 
-        # slice_number_orig = slice_number
+        slice_number_orig = slice_number
         r = 5
         if slice_number <= 10:
             slice_number += random.randint(0, 5)
