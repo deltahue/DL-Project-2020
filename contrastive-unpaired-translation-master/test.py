@@ -107,11 +107,13 @@ if __name__ == '__main__':
             patch.patch = fake_B.cpu().numpy() # get image results
 
 
-        prediction = patchify.unpatchify(patches, 0, 256)
+        img_path = model.get_image_paths()     # get image paths
+
+        prediction = patchify.unpatchify(patches, 0, 512)
 
         new_CT = 4095*prediction - 1024
         ni_image = nibabel.Nifti1Image(new_CT[0,0,:,:], np.eye(4))
-        nibabel.save(ni_image, 'filename.nii')
+        nibabel.save(ni_image, img_path +'.nii')
         prediction = (prediction-0.5)/0.5
         print(prediction)
         # prediction = np.array(scipy.ndimage.zoom(prediction, (1, 1, 2, 2), order=1),dtype=np.float)
@@ -126,7 +128,6 @@ if __name__ == '__main__':
         # real_B = np.array(scipy.ndimage.zoom(real_B, (1, 1, 2, 2), order=1),dtype=np.float)
         visuals = {'real_A': real_A, 'fake_B': torch.tensor(prediction), 'real_B': real_B}
 
-        img_path = model.get_image_paths()     # get image paths
 
         # apply metrics
         # metricMAE(visuals[fake_key], visuals[real_key])
