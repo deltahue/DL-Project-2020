@@ -41,7 +41,7 @@ def patchify(img, n, patch_size):
                 patch = Patch(img, i, j, n, patch_size)  # Create patch
                 C = np.count_nonzero(patch.patch)
                 print(C, 256 * 256 / 4)
-                if (n//3+2 <= i < 2*n//3-1 and n//3+2 <= j < 2*n//3-1) or  C > 256*256/4:
+                if (n//3+2 <= i < 2*n//3-1 and n//3+2 <= j < 2*n//3-1) or  C > 256*256/2:
                     patches.append(patch)  # Add patch to list
     return patches
 
