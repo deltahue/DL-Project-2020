@@ -107,7 +107,7 @@ if __name__ == '__main__':
             patch.patch = fake_B.cpu().numpy() # get image results
 
 
-        img_path = data['B_paths']    # get image paths
+        img_path = model.get_image_paths()     # get image paths
 
 
         prediction = patchify.unpatchify(patches, 0, 512)
