@@ -48,8 +48,9 @@ def read_slices(path):
             
         elif f[-4:] == '.nii':
             A_img_nifti = nib.load(os.path.join(path, f))
-            imglist[f] = A_img_nifti.get_fdata(caching = "unchanged")
-            print(np.max(imglist[f]))
+            imglist[f] = A_img_nifti.get_fdata(caching = "unchanged").astype(np.int16)
+
+            #print(imglist[f][0,0])
         else:
             print(f + ' does not fit specified input')
     return imglist
@@ -121,25 +122,30 @@ if __name__ == "__main__":
         diff = real_vol - fake_vol
         
         # calculate MAE
-        mae = (np.abs(diff)).mean()
+        mae = (np.abs(diff[mask>0])).mean()
         print(p + ' MAE: '+ str(mae))
 
         # calculate MSE
         print(np.max((diff**2)))
-        mse = ((diff)**2).mean()
+        mse = ((diff[mask>0])**2).mean()
         print(p + ' MSE: '+ str(mse))
 
         # calculate ME
-        me = diff.mean()
+        me = diff[mask>0].mean()
         print(p + ' ME: '+ str(me))
 
         # calculate MSE
         print(np.max((diff**2)))
-        msre = np.sqrt(((diff)**2).mean())
+        msre = np.sqrt(((diff[mask>0])**2).mean())
         print(p + ' MSE: '+ str(mse))
 
-        
         results[p] = {'mse': float(mse), 'mae': float(mae), 'me': float(me)}
+
+
+    cv2.imwrite('test_fake.png', fake_vol[:,:,150])
+    cv2.imwrite('test_real.png', real_vol[:,:,150])
+    cv2.imwrite('test_mask.png', mask[:,:,150]*255)
+    
     print(args.FID)
     if args.FID:
         print('Calculating FID score, this may take a while...')
