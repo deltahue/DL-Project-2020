@@ -57,7 +57,7 @@ To obtain the synthetic CT images, the steps to reproduce are the following:
 ```bash
   python test.py --dataroot "/content/dataset/test/test"--name experiment_CycleGAN --crop_size 512 --load_size 512 --num_threads 1 --no_flip  --output_nc 1 --input_nc 1  --model cycle_gan```
 ```
-# How to calculate the metrics
+## How to calculate the metrics
 
 The metrics can be calculated using the script `metrics-evaluation.py`. The script can be called the following way:
 ```bash
