@@ -24,6 +24,7 @@ python train.py --dataroot ./datasets/grumpifycat --name grumpycat_FastCUT --CUT
  Train the CycleGAN model
  ```bash
 python tr
+ ```
 
 The checkpoints will be stored at `./checkpoints/grumpycat_*/web`.
 
