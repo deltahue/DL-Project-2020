@@ -109,7 +109,6 @@ if __name__ == '__main__':
 
         img_path = model.get_image_paths()     # get image paths
 
-
         prediction = patchify.unpatchify(patches, 0, 512)
 
         new_CT = 4095*prediction - 1024
