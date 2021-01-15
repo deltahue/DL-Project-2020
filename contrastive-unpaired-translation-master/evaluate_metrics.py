@@ -14,7 +14,8 @@ parser.add_argument('--bodymask_path',  type=str)
 parser.add_argument('--real_slices_path',  type=str)
 parser.add_argument('--fake_slices_path',  type=str)
 parser.add_argument('--results_path',  type=str, default='./metrics_result.yaml')
-parser.add_argument('--FID', type=bool, default=False)
+parser.add_argument('--FID', action='store_true')
+parser.add_argument('--debug_images', action='store_true')
 
 args = parser.parse_args()
 
@@ -26,7 +27,7 @@ def build_volume(slices, patient):
     #print(filtered_slice_keys)
     #print(slices[filtered_slice_keys[0]].shape)$
     filtered_slice_keys.sort()
-    print(filtered_slice_keys)
+    #print(filtered_slice_keys)
     volume_dimensions = (slices[filtered_slice_keys[0]].shape[0], slices[filtered_slice_keys[0]].shape[0], len(filtered_slice_keys))
 
     volume = np.zeros(volume_dimensions)
@@ -78,8 +79,8 @@ def read_mask(path):
 
 
 def mask_volume(volume, mask):
-    print(volume.shape)
-    print(mask.shape)
+    #print(volume.shape)
+    #print(mask.shape)
     #assert (volume.shape == mask.shape).all()
     return np.multiply(volume, mask)
 
@@ -102,6 +103,8 @@ if __name__ == "__main__":
     results['fake_path'] = fake_slices_path
     results['masks_path'] = bodymask_path
     pat = ['PAT1', 'PAT3']#, 'PAT5']
+
+    diff_all_pat = []
     for p in pat:
         # make volumes
         print(p)
@@ -112,41 +115,63 @@ if __name__ == "__main__":
 
         # maybe make some assertions
         # mask volumes
-        print('-------')
-        print(len(np.nonzero(fake_vol)[0]))
         fake_vol = mask_volume(fake_vol, mask)
-        print(len(np.nonzero(fake_vol)[0]))
-        print(len(np.nonzero(mask)[0]))
-        print('--------------------')
         real_vol = mask_volume(real_vol, mask)
 
-
         diff = real_vol - fake_vol
-        
+        diff_masked = diff[mask>0]
+        diff_all_pat.append(diff_masked)
         # calculate MAE
-        mae = (np.abs(diff[mask>0])).mean()
-        print(p + ' MAE: '+ str(mae))
+        mae = (np.abs(diff_masked)).mean()
+        sd_ae = np.std(np.abs(diff_masked))
+
+        print(p + ' MAE: '+ str(mae) + ', SD: '+ str(sd_ae))
 
         # calculate MSE
-        print(np.max((diff**2)))
-        mse = ((diff[mask>0])**2).mean()
-        print(p + ' MSE: '+ str(mse))
+        mse = ((diff_masked)**2).mean()
+        sd_se = np.std((diff_masked)**2)
+        print(p + ' MSE: '+ str(mse) + ', SD: '+ str(sd_se))
 
         # calculate ME
-        me = diff[mask>0].mean()
-        print(p + ' ME: '+ str(me))
+        me = diff_masked.mean()
+        sd_e = np.std(diff_masked)
+        print(p + ' ME: '+ str(me)+ ', SD: '+ str(sd_e))
 
-        # calculate MSE
-        print(np.max((diff**2)))
-        msre = np.sqrt(((diff[mask>0])**2).mean())
-        print(p + ' MSE: '+ str(mse))
+        # calculate MRSE
+        mrse = np.sqrt(mse)
+        print(p + ' MRSE: '+ str(mrse))
 
-        results[p] = {'mse': float(mse), 'mae': float(mae), 'me': float(me)}
-
-    def on_change(i):   
-        img = np.hstack(((real_vol[:,:,i]+1024)/4095, (fake_vol[:,:,i]+1024)/4095, mask[:,:,i]))
-        cv2.imshow('real-fake-mask', img)
+        results[p] = {
+            'mse': float(mse), 'sd_mse': float(sd_se), 
+            'mae': float(mae), 'sd_mae': float(sd_ae),
+            'me': float(me), 'sd_me': float(sd_e)}
     
+    # calculations for all patients
+    p = 'PAT1+PAT3'
+    # calculate MAE 
+    diff_all_pat = np.concatenate(diff_all_pat)
+    # calculate MAE
+    mae = (np.abs(diff_all_pat)).mean()
+    sd_ae = np.std(np.abs(diff_all_pat))
+
+    print(p + ' MAE: '+ str(mae) + ', SD: '+ str(sd_ae))
+
+    # calculate MSE
+    mse = ((diff_all_pat)**2).mean()
+    sd_se = np.std((diff_all_pat)**2)
+    print(p + ' MSE: '+ str(mse) + ', SD: '+ str(sd_se))
+
+
+    # calculate ME
+    me = diff_all_pat.mean()
+    sd_e = np.std(diff_all_pat)
+    print(p + ' ME: '+ str(me)+ ', SD: '+ str(sd_e))
+    results[p] = {
+        'mse': float(mse), 'sd_mse': float(sd_se), 
+        'mae': float(mae), 'sd_mae': float(sd_ae),
+        'me': float(me), 'sd_me': float(sd_e)}
+
+
     print(args.FID)
     if args.FID:
         print('Calculating FID score, this may take a while...')
@@ -155,15 +180,24 @@ if __name__ == "__main__":
                                                      batch_size=50,
                                                      device=None,
                                                      dims=2048)
-        results['FID'] = fid_value
+        results['FID'] = float(fid_value)
     with open(results_path, 'w') as file:
         documents = yaml.dump(results, file)
     print(results)
 
+    if args.debug_images:
+        def on_change(i):   
+            img = np.hstack(((real_vol[:,:,i]+1024)/4095, (fake_vol[:,:,i]+1024)/4095, mask[:,:,i]))
+            cv2.imshow('real-fake-mask', img)
+        img = np.hstack(((real_vol[:,:,0]+1024)/4095, (fake_vol[:,:,0]+1024)/4095, mask[:,:,0]))
+        cv2.imshow('real-fake-mask', img)
+        cv2.createTrackbar('slider', 'real-fake-mask', 0, 299, on_change)
+        while True:
+            k = cv2.waitKey(0)
+            if k==27:    # Esc key to stop
+                cv2.destroyAllWindows()
+                break
 
-    img = np.hstack(((real_vol[:,:,0]+1024)/4095, (fake_vol[:,:,0]+1024)/4095, mask[:,:,0]))
-    cv2.imshow('real-fake-mask', img)
-    cv2.createTrackbar('slider', 'real-fake-mask', 0, 299, on_change)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+
+    
 
