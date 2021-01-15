@@ -94,7 +94,7 @@ if __name__ == '__main__':
         print('Input max', np.amax(real_A.numpy()))
         print('Input max', real_A.numpy().shape)
 
-        patches = patchify.patchify(real_A.numpy(), 16, 256)
+        patches = patchify.patchify(real_A.numpy(), 1, 256)
         for p in range(len(patches)):
 
             patch = patches[p]
@@ -107,7 +107,8 @@ if __name__ == '__main__':
             patch.patch = fake_B.cpu().numpy() # get image results
 
 
-        img_path = model.get_image_paths()     # get image paths
+        img_path = data['B_paths'][0]    # get image paths
+
 
         prediction = patchify.unpatchify(patches, 0, 512)
 
