@@ -1,5 +1,6 @@
 # DL-Project-2020
 
+The following is a description to reproduce our training and testing methods.
 
 ## Clone our repository
 - Clone this repository:
@@ -14,20 +15,20 @@ Dowload the medical dataset that was submitted together with the report and stor
 ## Train the models
 ### CUT
  ```bash
-!python -u train.py --dataroot '/content/dataset/train' --name experiment_CUT --batch_size 1 --max_dataset_size 50  --output_nc 1 --input_nc 1 --verbose --lr 0.0001 --preprocess none --crop_size 256 --model cut --lr 0.0001 --preprocess none --save_epoch_freq 1 --verbose --display_id 0 --continue_train --epoch_count 12
+!python -u train.py --dataroot '/datasets/train/train' --name experiment_CUT --batch_size 1 --max_dataset_size 50  --output_nc 1 --input_nc 1 --verbose --lr 0.0001 --preprocess none --crop_size 256 --model cut --lr 0.0001 --preprocess none --save_epoch_freq 1 --verbose --display_id 0 --continue_train --epoch_count 12
  ```
  The checkpoints will be stored at `./checkpoints/experiment_CUT`.
 
 
 ### FastCUT
  ```bash
-!python -u train.py --dataroot '/content/dataset/train' --name experiment_FastCUT  --batch_size 1 --max_dataset_size 50  --output_nc 1 --input_nc 1 --verbose --lr 0.0001 --preprocess none --crop_size 256 --model cut --mode FastCUT --lr 0.0001 --preprocess none --save_epoch_freq 1 --verbose --display_id 0 --continue_train --epoch_count 12
+!python -u train.py --dataroot '/datasets/train/train' --name experiment_FastCUT  --batch_size 1 --max_dataset_size 50  --output_nc 1 --input_nc 1 --verbose --lr 0.0001 --preprocess none --crop_size 256 --model cut --mode FastCUT --lr 0.0001 --preprocess none --save_epoch_freq 1 --verbose --display_id 0 --continue_train --epoch_count 12
  ```
  The checkpoints will be stored at `./checkpoints/experiment_FastCUT`.
 
 ### CycleGAN
  ```
-!python -u train.py --dataroot '/content/dataset/train' --name experiment_CycleGAN --batch_size 1 --max_dataset_size 50  --output_nc 1 --input_nc 1 --verbose --lr 0.0001 --preprocess none --crop_size 256 --model cycle_gan --lr 0.0001 --preprocess none --save_epoch_freq 1 --verbose --display_id 0 --continue_train --epoch_count 12
+!python -u train.py --dataroot '/datasets/train/train' --name experiment_CycleGAN --batch_size 1 --max_dataset_size 50  --output_nc 1 --input_nc 1 --verbose --lr 0.0001 --preprocess none --crop_size 256 --model cycle_gan --lr 0.0001 --preprocess none --save_epoch_freq 1 --verbose --display_id 0 --continue_train --epoch_count 12
  ```
  The checkpoints will be stored at `./checkpoints/experiment_CycleGAN`.
 
@@ -43,13 +44,13 @@ To obtain the synthetic CT images, the steps to reproduce are the following:
 
 - Test the CUT model:
 ```bash
-  python test.py --dataroot "/content/dataset/test/test" --name experiment_CUT --crop_size 512 --load_size 512 --num_threads 1 --no_flip  --output_nc 1 --input_nc 1  --model cut
+  python test.py --dataroot "/datasets/test/test" --name experiment_CUT --crop_size 512 --load_size 512 --num_threads 1 --no_flip  --output_nc 1 --input_nc 1  --model cut
 ```
 
 ### FastCUT
 
 ```bash
-  python test.py --dataroot "/content/dataset/test/test" --name experiment_FastCUT --crop_size 512 --load_size 512 --num_threads 1 --no_flip  --output_nc 1 --input_nc 1  --model cut --mode FastCUT
+  python test.py --dataroot "/datasets/test/test" --name experiment_FastCUT --crop_size 512 --load_size 512 --num_threads 1 --no_flip  --output_nc 1 --input_nc 1  --model cut --mode FastCUT
 ```
 
 ### CycleGAN
