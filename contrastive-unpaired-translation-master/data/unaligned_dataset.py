@@ -73,7 +73,6 @@ class UnalignedDataset(BaseDataset):
             slice_number = int(slicenii[:3])
         B_path = '/path/to/B'
         # print(slice_number)
-<<<<<<< HEAD
 
 
         slice_number_orig = slice_number
@@ -126,29 +125,7 @@ class UnalignedDataset(BaseDataset):
                     pass
 
             # r += 1
-=======
-        slice_number_orig = slice_number
-        r = 5
-        while not os.path.exists(B_path):
-            slice_number += random.randint(-r, 5)
-            # print(slice_number)
-            slicenii2 = str(slice_number) + ".nii"
-            pat_ct_slice = pat + "-CTSim-" + slicenii2
-            B_paths = [path_ct for path_ct in self.B_paths if pat_ct_slice in path_ct]
-            if B_paths == []:
-                B_paths = [B_path]
-                slice_number = slice_number_orig
-            B_path = B_paths[0]
-            try:
-                B_img_nifti = nib.load(B_path)
-                B_img_numpy = B_img_nifti.get_fdata(caching = "unchanged")
-                if not np.any(B_img_numpy):
-                    B_path = '/path/to/B'
-                    slice_number = slice_number_orig
-            except:
-                pass
-            r += 1
->>>>>>> mse_mae_branch
+
         # if self.opt.serial_batches:   # make sure index is within then range
         #     index_B = index % self.B_size
         # else:   # randomize the index for domain B to avoid fixed pairs.
@@ -156,25 +133,20 @@ class UnalignedDataset(BaseDataset):
 
         # B_path = self.B_paths[index_B]
         #A_img = Image.open(A_path).convert('RGB')
-<<<<<<< HEAD
+
         # print("B_path {}".format(B_path))
         # print("Time {}".format(time.time() - start_time))
         A_img_nifti = nib.load(A_path)
         A_img_numpy = A_img_nifti.get_fdata(caching = "unchanged")
         A_img_numpy = np.squeeze(A_img_numpy)
         # A_img_numpy = np.rot90(A_img_numpy)
-=======
-        A_img_nifti = nib.load(A_path)
-        A_img_numpy = A_img_nifti.get_fdata(caching = "unchanged")
-        A_img_numpy = np.squeeze(A_img_numpy)
->>>>>>> mse_mae_branch
+
         A_img_numpy = (A_img_numpy - np.amin(A_img_numpy))/(np.amax(A_img_numpy) - np.amin(A_img_numpy)) #Normalize MR to be in range [0, 255]
         if np.amax(A_img_numpy) == 0:
             print("MR empty in {}".format(A_path))
         A_img_numpy[A_img_numpy > 1.] = 1.
         A_img_numpy[A_img_numpy < 0.] = 0.
         A_img_numpy = 255*A_img_numpy
-<<<<<<< HEAD
         A_nonzero = np.count_nonzero(A_img_numpy)
         A_img_numpy = A_img_numpy.astype(np.uint8)
         A_img = Image.fromarray(A_img_numpy)
@@ -221,33 +193,10 @@ class UnalignedDataset(BaseDataset):
                 B_crop = TF.crop(B_img, i, j, h, w)
             else:
                 B_crop = B_img
-=======
-        A_img_numpy = A_img_numpy.astype(np.uint8)
-        A_img = Image.fromarray(A_img_numpy)
-        # Random crop
-        i, j, h, w = transforms.RandomCrop.get_params(A_img, output_size=(self.opt.crop_size,self.opt.crop_size))
-        A_crop = TF.crop(A_img, i, j, h, w)
-        while not A_crop.getbbox():
-            i, j, h, w = transforms.RandomCrop.get_params(A_img, output_size=(self.opt.crop_size, self.opt.crop_size))
-            A_crop = TF.crop(A_img, i, j, h, w)
-
-        #B_img = Image.open(B_path).convert('RGB')
-        # B_img_nifti = nib.load(B_path)
-        # B_img_numpy = B_img_nifti.get_fdata(caching = "unchanged")
-        B_img_numpy = np.squeeze(B_img_numpy)
-        B_img_numpy = (B_img_numpy + 1024.)/4095. #Normalize CT to be in range [0, 255]
-        B_img_numpy[B_img_numpy > 1.] = 1.
-        B_img_numpy[B_img_numpy < 0.] = 0.
-        B_img_numpy = 255*B_img_numpy
-        B_img_numpy = B_img_numpy.astype(np.uint8)
-        B_img = Image.fromarray(B_img_numpy)
-        B_crop = TF.crop(B_img, i, j, h, w)
->>>>>>> mse_mae_branch
         # Apply image transformation
         # For FastCUT mode, if in finetuning phase (learning rate is decaying),
         # do not perform resize-crop data augmentation of CycleGAN.
 #        print('current_epoch', self.current_epoch)
-<<<<<<< HEAD
             is_finetuning = self.opt.isTrain and self.current_epoch > self.opt.n_epochs
             modified_opt = util.copyconf(self.opt, load_size=self.opt.crop_size if is_finetuning else self.opt.load_size)
             transform = get_transform(modified_opt)
@@ -275,20 +224,6 @@ class UnalignedDataset(BaseDataset):
         # B = el_def(B)
         # A = torch.squeeze(A, dim = 3)
         # B = torch.squeeze(B, dim = 3)
-=======
-        is_finetuning = self.opt.isTrain and self.current_epoch > self.opt.n_epochs
-        modified_opt = util.copyconf(self.opt, load_size=self.opt.crop_size if is_finetuning else self.opt.load_size)
-        transform = get_transform(modified_opt)
-        A = transform(A_crop)
-        B = transform(B_crop)
-        A = torch.unsqueeze(A, dim = 3)
-        B = torch.unsqueeze(B, dim = 3)
-        el_def = RandomElasticDeformation(num_control_points=6, locked_borders=2)
-        A = el_def(A)
-        B = el_def(B)
-        A = torch.squeeze(A, dim = 3)
-        B = torch.squeeze(B, dim = 3)
->>>>>>> mse_mae_branch
         return {'A': A, 'B': B, 'A_paths': A_path, 'B_paths': B_path}
 
     def __len__(self):
