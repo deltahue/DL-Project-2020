@@ -4,6 +4,7 @@ import nibabel as nib
 import os
 import yaml
 from pytorch_fid import fid_score
+
 #from pytorch_lightning import metrics
 
 import argparse
@@ -27,9 +28,12 @@ def build_volume(slices, patient):
     volume_dimensions = (slices[filtered_slice_keys[0]].shape[0], slices[filtered_slice_keys[0]].shape[0], len(filtered_slice_keys))
 
     volume = np.zeros(volume_dimensions)
-    
+
     for i, sl in enumerate(filtered_slice_keys):
-        volume[:,:,i] = slices[sl][:,:,0]
+        if len(slices[sl].shape) == 2:
+            volume[:,:,i] = slices[sl]
+        else:
+            volume[:,:,i] = slices[sl][:,:,0]
 
     return volume
 
@@ -45,9 +49,18 @@ def read_slices(path):
         elif f[-4:] == '.nii':
             A_img_nifti = nib.load(os.path.join(path, f))
             imglist[f] = A_img_nifti.get_fdata(caching = "unchanged")
+            print(np.max(imglist[f]))
         else:
             print(f + ' does not fit specified input')
     return imglist
+
+
+def rescale_slices(slices):
+    for key in slices:
+        #print(np.max(slices[key]))
+        slices[key] = 4095*slices[key] -1024
+        
+    return slices
 
 
 def read_mask(path):
@@ -73,17 +86,19 @@ if __name__ == "__main__":
     real_slices_path = args.real_slices_path
     fake_slices_path = args.fake_slices_path
     results_path = args.results_path
-
+    print('reading real slices from: '+ real_slices_path)
     real_slices = read_slices(real_slices_path)
+    print('reading fake slices from: '+ fake_slices_path)
     fake_slices = read_slices(fake_slices_path)
-
+    print('rescaling fake slices')
+    #   fake_slices = rescale_slices(fake_slices)
 
     mask_slices = read_slices(bodymask_path)
     results = {}
     results['real_path'] = real_slices_path
     results['fake_path'] = fake_slices_path
     results['masks_path'] = bodymask_path
-    pat = ['PAT1', 'PAT3', 'PAT5']
+    pat = ['PAT1', 'PAT3']#, 'PAT5']
     for p in pat:
         # make volumes
         print(p)
@@ -94,21 +109,38 @@ if __name__ == "__main__":
 
         # maybe make some assertions
         # mask volumes
+        print('-------')
+        print(len(np.nonzero(fake_vol)[0]))
         fake_vol = mask_volume(fake_vol, mask)
+        print(len(np.nonzero(fake_vol)[0]))
+        print(len(np.nonzero(mask)[0]))
+        print('--------------------')
         real_vol = mask_volume(real_vol, mask)
-        diff = real_vol - fake_vol
 
+
+        diff = real_vol - fake_vol
+        
         # calculate MAE
         mae = (np.abs(diff)).mean()
         print(p + ' MAE: '+ str(mae))
 
         # calculate MSE
+        print(np.max((diff**2)))
         mse = ((diff)**2).mean()
-
         print(p + ' MSE: '+ str(mse))
-        
-        results[p] = {'mse': float(mse), 'mae': float(mae)}
 
+        # calculate ME
+        me = diff.mean()
+        print(p + ' ME: '+ str(me))
+
+        # calculate MSE
+        print(np.max((diff**2)))
+        msre = np.sqrt(((diff)**2).mean())
+        print(p + ' MSE: '+ str(mse))
+
+        
+        results[p] = {'mse': float(mse), 'mae': float(mae), 'me': float(me)}
+    print(args.FID)
     if args.FID:
         print('Calculating FID score, this may take a while...')
         fid_paths =  [real_slices_path,fake_slices_path]
