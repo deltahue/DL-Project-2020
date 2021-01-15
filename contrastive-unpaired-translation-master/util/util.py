@@ -8,7 +8,7 @@ import importlib
 import argparse
 from argparse import Namespace
 import torchvision
-
+import nibabel
 
 def str2bool(v):
     if isinstance(v, bool):
@@ -59,6 +59,7 @@ def tensor2im(input_image, imtype=np.uint8):
         image_numpy = (np.transpose(image_numpy, (1, 2, 0)) + 1) / 2.0 * 255.0  # post-processing: tranpose and scaling
     else:  # if it is a numpy array, do nothing
         image_numpy = input_image
+
     return image_numpy.astype(imtype)
 
 
@@ -98,6 +99,7 @@ def save_image(image_numpy, image_path, aspect_ratio=1.0):
         image_pil = image_pil.resize((h, int(w * aspect_ratio)), Image.BICUBIC)
     elif aspect_ratio < 1.0:
         image_pil = image_pil.resize((int(h / aspect_ratio), w), Image.BICUBIC)
+
     image_pil.save(image_path)
 
 
