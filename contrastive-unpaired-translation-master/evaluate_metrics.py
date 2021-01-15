@@ -146,16 +146,6 @@ if __name__ == "__main__":
     def on_change(i):   
         img = np.hstack(((real_vol[:,:,i]+1024)/4095, (fake_vol[:,:,i]+1024)/4095, mask[:,:,i]))
         cv2.imshow('real-fake-mask', img)
-
-    img = np.hstack(((real_vol[:,:,0]+1024)/4095, (fake_vol[:,:,0]+1024)/4095, mask[:,:,0]))
-    cv2.imshow('real-fake-mask', img)
-    cv2.createTrackbar('slider', 'real-fake-mask', 0, 299, on_change)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-    cv2.imwrite('test_fake.png', fake_vol[:,:,150])
-    cv2.imwrite('test_real.png', real_vol[:,:,150])
-    cv2.imwrite('test_mask.png', mask[:,:,150]*255)
     
     print(args.FID)
     if args.FID:
@@ -169,4 +159,11 @@ if __name__ == "__main__":
     with open(results_path, 'w') as file:
         documents = yaml.dump(results, file)
     print(results)
+
+
+    img = np.hstack(((real_vol[:,:,0]+1024)/4095, (fake_vol[:,:,0]+1024)/4095, mask[:,:,0]))
+    cv2.imshow('real-fake-mask', img)
+    cv2.createTrackbar('slider', 'real-fake-mask', 0, 299, on_change)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
