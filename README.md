@@ -1,6 +1,8 @@
 # DL-Project-2020
 
 The following is a description to reproduce our training and testing methods.
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1_R5dYDhowquC_Q7A1BReGBUEW0wTuj2E?usp=sharing]
+
 
 ## Clone our repository
 - Clone this repository:
@@ -55,16 +57,7 @@ To obtain the synthetic CT images, the steps to reproduce are the following:
 
 ### CycleGAN
 ```bash
-  python test.py --dataroot "/content/dataset/test/test"--name experiment_CycleGAN --crop_size 512 --load_size 512 --num_threads 1 --no_flip  --output_nc 1 --input_nc 1  --model cycle_gan```
-```
-## How to calculate the metrics
+  python test.py --dataroot "/content/dataset/test/test"--name experiment_CycleGAN --crop_size 512 --load_size 512 --num_threads 1 --no_flip  --output_nc 1 --input_nc 1  --model cycle_gan
+  ```
 
-The metrics can be calculated using the script `metrics-evaluation.py`. The script can be called the following way:
-```bash
-python evaluate_metrics.py --bodymask_path '/masks/' --fake_slices_path 'path_to_generated_slices' --real_slices_path 'path_to_real_slices' --FID
-```
-
-Furthermore there is an option to geht some debug image information with `--debug_images` and the path where the metrics are saved can be specified using the argument `--results_path` (default is in the current directory).
-
-The `--FID` tag can be used to perform Frechet Inception Distance calculations. For this the modified pip package needs to be cloned from 'https://github.com/deltahue/pytorch-fid' and installed locally.
-
+After testing is completed, the results will be shown under the results folder in the repository directory
