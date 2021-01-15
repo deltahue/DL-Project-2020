@@ -94,7 +94,7 @@ if __name__ == '__main__':
         print('Input max', np.amax(real_A.numpy()))
         print('Input max', real_A.numpy().shape)
 
-        patches = patchify.patchify(real_A.numpy(), 1, 256)
+        patches = patchify.patchify(real_A.numpy(), 1, 512)
         for p in range(len(patches)):
 
             patch = patches[p]
