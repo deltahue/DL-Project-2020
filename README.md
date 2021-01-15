@@ -1,13 +1,10 @@
+# DL-Project-2020
+
 The following is a Google Colab project that reproduces the necessary steps to train and test the models
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1_R5dYDhowquC_Q7A1BReGBUEW0wTuj2E?usp=sharing]
 
 Alternatively, one can run the code in a local machine. These are the steps to reproduce:
-# DL-Project-2020
-
-The following is a description to reproduce our training and testing methods.
-
-
 ## Clone our repository
 - Clone this repository:
 ```bash
