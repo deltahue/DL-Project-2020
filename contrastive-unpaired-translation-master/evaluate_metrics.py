@@ -22,12 +22,9 @@ args = parser.parse_args()
 def build_volume(slices, patient):
     # build 3D volume w*h*d
     names_slices = slices.keys()
-    #print(names_slices)
     filtered_slice_keys =[s for s in names_slices if (s[:4] == patient)]
-    #print(filtered_slice_keys)
-    #print(slices[filtered_slice_keys[0]].shape)$
+
     filtered_slice_keys.sort()
-    #print(filtered_slice_keys)
     volume_dimensions = (slices[filtered_slice_keys[0]].shape[0], slices[filtered_slice_keys[0]].shape[0], len(filtered_slice_keys))
 
     volume = np.zeros(volume_dimensions)
@@ -61,7 +58,6 @@ def read_slices(path):
 
 def rescale_slices(slices):
     for key in slices:
-        #print(np.max(slices[key]))
         slices[key] = 4095*slices[key] -1024
         
     return slices
@@ -79,9 +75,6 @@ def read_mask(path):
 
 
 def mask_volume(volume, mask):
-    #print(volume.shape)
-    #print(mask.shape)
-    #assert (volume.shape == mask.shape).all()
     return np.multiply(volume, mask)
 
 
@@ -95,14 +88,18 @@ if __name__ == "__main__":
     print('reading fake slices from: '+ fake_slices_path)
     fake_slices = read_slices(fake_slices_path)
     print('rescaling fake slices')
-    #   fake_slices = rescale_slices(fake_slices)
 
     mask_slices = read_slices(bodymask_path)
     results = {}
     results['real_path'] = real_slices_path
     results['fake_path'] = fake_slices_path
     results['masks_path'] = bodymask_path
-    pat = ['PAT1', 'PAT3']#, 'PAT5']
+
+    # patient list with registered data, this needs to be changed if more
+    # or other registered training data is available. The all the files with the
+    # filename beginning with one of the list elements are considered.
+
+    pat = ['PAT1', 'PAT3']
 
     diff_all_pat = []
     for p in pat:
@@ -113,7 +110,6 @@ if __name__ == "__main__":
 
         mask = build_volume(mask_slices, p)
 
-        # maybe make some assertions
         # mask volumes
         fake_vol = mask_volume(fake_vol, mask)
         real_vol = mask_volume(real_vol, mask)
@@ -140,7 +136,8 @@ if __name__ == "__main__":
         # calculate MRSE
         mrse = np.sqrt(mse)
         print(p + ' MRSE: '+ str(mrse))
-
+        
+        # add to dict
         results[p] = {
             'mse': float(mse), 'sd_mse': float(sd_se), 
             'mae': float(mae), 'sd_mae': float(sd_ae),
@@ -172,7 +169,7 @@ if __name__ == "__main__":
         'me': float(me), 'sd_me': float(sd_e)}
 
 
-    print(args.FID)
+    print('FID Calculations: ' + str(args.FID))
     if args.FID:
         print('Calculating FID score, this may take a while...')
         fid_paths =  [real_slices_path,fake_slices_path]
