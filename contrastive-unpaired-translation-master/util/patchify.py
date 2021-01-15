@@ -83,3 +83,4 @@ def unpatchify(patches, crop, s):
     #         average_y[0,0,i,j] = np.mean(array_patches[label_y_patches == label_vote],axis = -1)
     # print(average_y.shape)
     return  res
+

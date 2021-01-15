@@ -51,6 +51,8 @@ import nibabel
 
 import numpy as np
 
+import numpy as np
+
 if __name__ == '__main__':
     opt = TestOptions().parse()  # get test options
     # hard-code some parameters for test
@@ -141,6 +143,7 @@ if __name__ == '__main__':
     webpage.save()  # save the HTML
 
     # compute metrics
+
     # mae = metricMAE.compute()
     # mse = metricMSE.compute()
 

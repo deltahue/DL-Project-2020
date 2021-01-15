@@ -120,6 +120,7 @@ def get_transform(opt, params=None, grayscale=True, data_augmentation = True, me
     if opt.isTrain:
         if data_augmentation:
             transform_list.append(transforms.RandomAffine(2.,scale = [0.9,1.1]))
+
     if not opt.no_flip:
         if params is None or 'flip' not in params:
             transform_list.append(transforms.RandomHorizontalFlip())
